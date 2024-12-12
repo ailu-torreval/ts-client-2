@@ -5,7 +5,6 @@ import { RootStackParamList } from "../App";
 import ProfileScreen from "../screens/ProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
 import { Icon, useTheme } from "@rneui/themed";
-import CustomHeader from "../components/CustomHeader";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import MerchantScreen from "../screens/MerchantScreen";
 import ProductScreen from "../screens/ProductScreen";
@@ -32,8 +31,8 @@ const MainNavigation: React.FC = () => {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: "gray",
-        tabBarStyle: { height: 100 },
-        tabBarItemStyle: { paddingBottom: 10 },
+        tabBarStyle: { height: 70 },
+        tabBarItemStyle: { paddingBottom: 10, paddingTop: 10 },
         headerShown: false,
       })}
     >
@@ -50,9 +49,13 @@ const HomeStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStackNavigator = () => {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="homescreen" component={HomeScreen}   options={{
-    header: props => <CustomHeader screen="home" />,
-  }} />
+      <HomeStack.Screen name="homescreen" component={HomeScreen}   
+      options={{
+        headerBackVisible: false,
+        headerShown: false,
+    // header: props => <CustomHeader screen="home" />,
+  }}
+   />
       <HomeStack.Screen name="merchant" component={MerchantScreen}
         options={{
           headerBackVisible: false,

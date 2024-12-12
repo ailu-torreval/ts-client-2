@@ -1,21 +1,66 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { Card, FAB, Header, Icon, useTheme } from "@rneui/themed";
-import { SafeAreaView, Text, View } from "react-native";
+import { Platform, SafeAreaView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { Image } from "react-native";
+import { Toast } from "native-base";
+import { useEffect, useState } from "react";
+import { Camera } from 'expo-camera';
 
-// type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
+const logo = require("../assets/logo-white.png");
 
-// const HomeScreen: React.FC<Props> = ({ navigation }) => {
-const HomeScreen: React.FC = () => {
+type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
+
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const { theme } = useTheme();
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [cameraVisible, setCameraVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(status === 'granted');
+      }
+    })();
+  }, []);
+
+  function handleFabPress() {
+    if (Platform.OS === 'web') {
+      Toast.show({
+        description: 'Camera access is not available on web.',
+      });
+    } else {
+      // Open the camera
+      setCameraVisible(true);
+      console.log('Open camera');
+    }  }
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Header
+  leftComponent={
+    <Image
+    source={logo}
+    style={{ width: "150%", height:"150%", alignSelf: "center", justifyContent: 'center' }}
+    resizeMode="contain"
+    /> }
+  centerComponent={
+      <Text style={{ color: "#fff", fontWeight: 'bold', marginTop: 5,  fontSize: 18 }}>Table Service App</Text>
+  }
+  containerStyle={{
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'space-around',
+    paddingTop: 10,
+    paddingBottom:25,
+    alignItems: 'center',
+  }}
+/>
+  <View style={styles.wrapper}>
         <Text style={styles.title}>Hi {user?.firstname}!</Text>
 
         <Card containerStyle={styles.card}>
@@ -86,14 +131,14 @@ const HomeScreen: React.FC = () => {
           <Card.Divider />
           <Text style={styles.text}> order card example</Text>
         </Card>
+      </View>
         <FAB
-          onPress={() => console.log("scan QR code")}
-          title="Scan QR"
+          onPress={() => handleFabPress()}
+          title="Scan"
           placement="right"
-          icon={{ name: "qr-code-scanner" }}
+          icon={{ name: "qr-code-scanner", color:"#fff" }}
           size="large"
         />
-      </View>
     </SafeAreaView>
   );
 };
@@ -101,9 +146,10 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 45,
+  },
+  wrapper: {
+    // paddingTop: 10,
     paddingLeft: 10,
-    textTransform: "capitalize",
   },
   text: {
     color: "black",
@@ -117,7 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingVertical: 15,
   },
-  title: { color: "#45A47D", fontWeight: "bold", fontSize: 30, paddingTop: 30 },
+  title: { color: "#45A47D", fontWeight: "bold", fontSize: 30, paddingTop: 30, textTransform: 'capitalize' }, 
   header: {
     backgroundColor: "#fff",
   },

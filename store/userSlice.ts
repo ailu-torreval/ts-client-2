@@ -10,6 +10,7 @@ import { User } from "../entities/User";
 import { LoginUserDto } from "../entities/LoginUserDto";
 import { UserAPI } from "../api/userAPI";
 import { SignupUserDto } from "../entities/SignupUserDto";
+import { Platform } from "react-native";
   
   export interface UserState {
     user: User | null;
@@ -24,8 +25,14 @@ import { SignupUserDto } from "../entities/SignupUserDto";
     loading: false,
     error: null,
   };
-  
-//   export const invoiceCreated = createAction<Invoice>("client/invoiceCreated");
+
+  function saveToken(token: string) {
+    if (Platform.OS === 'web') {
+      localStorage.setItem('token', token);
+    } else {
+    SecureStore.setItemAsync('token', token);
+    }
+  }
   
   export const login = createAsyncThunk(
     "login",
@@ -98,10 +105,7 @@ import { SignupUserDto } from "../entities/SignupUserDto";
           state.loading = false;
           state.user = action.payload.user;
           state.token = action.payload.token;
-          console.log("state fullfilled", state.token);
-          console.log("token", action.payload.token);
-          SecureStore.setItemAsync('token', String(action.payload.token));
-          console.log("token", typeof action.payload.token);
+          saveToken(action.payload.token);
         })
         .addCase(login.rejected, (state, action) => {
           state.loading = false;
@@ -116,7 +120,7 @@ import { SignupUserDto } from "../entities/SignupUserDto";
           state.loading = false;
           state.user = action.payload.user;
           state.token = action.payload.token;
-          SecureStore.setItemAsync('token', String(action.payload.token));
+          saveToken(action.payload.token);
         })
         .addCase(signup.rejected, (state, action) => {
           state.loading = false;

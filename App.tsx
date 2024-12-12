@@ -19,6 +19,7 @@ import LoginNavigation from "./navigation/LoginNavigation";
 import MainNavigation from "./navigation/MainNavigation";
 import { createTheme, ThemeProvider, useTheme } from "@rneui/themed";
 import * as SecureStore from "expo-secure-store";
+import { NativeBaseProvider } from "native-base";
 
 const theme = createTheme({
   lightColors: {
@@ -26,7 +27,15 @@ const theme = createTheme({
     secondary: "#F39200",
     success: "#0DCC70",
     warning: "#FFA726",
-    background: "#ffffff",
+    background: "#F9F9F9",
+    white: "#ffffff",
+    black: "#000000",
+  },
+  darkColors: {
+    primary: "#45A47D",
+    secondary: "#F39200",
+    success: "#0DCC70",
+    warning: "#FFA726",
     white: "#ffffff",
     black: "#000000",
   },
@@ -60,11 +69,9 @@ export default function App() {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        {/* <ThemeProvider theme={theme}>
-        <NativeBaseProvider> */}
+        <NativeBaseProvider> 
         <AppContent />
-        {/* </NativeBaseProvider>
-          </ThemeProvider> */}
+       </NativeBaseProvider>
       </ThemeProvider>
     </Provider>
   );

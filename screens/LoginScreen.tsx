@@ -17,6 +17,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Button, useTheme } from "@rneui/themed";
 import * as SecureStore from "expo-secure-store";
 import React from "react";
+import { FormControl, Icon, Input, VStack } from "native-base";
 
 const logo = require("../assets/logo.png");
 
@@ -62,11 +63,11 @@ const LoginScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <Image
         source={logo}
-        style={{ width: "50%", alignSelf: "center" }}
+        style={{ width: "30%", height:"30%", alignSelf: "center" }}
         resizeMode="contain"
       />
       
-      {/* <VStack space={4} mt={4}>
+      <VStack space={4} mt={4}>
         <FormControl>
           <FormControl.Label>Email</FormControl.Label>
           <Input
@@ -121,7 +122,7 @@ const LoginScreen: React.FC = () => {
           disabled={!email || !password}
           disabledStyle={{ backgroundColor: "lightgrey" }}
         />
-      </VStack> */}
+      </VStack> 
     </SafeAreaView>
   );
 };
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: "center",
     // alignItems: "center",
+    paddingTop: 10,
     paddingRight: 10,
     paddingLeft: 10,
   },

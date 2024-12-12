@@ -30,7 +30,7 @@ const MainScreen: React.FC<Props> = ({ navigation }) => {
             <Button
         title="Login"
         size="lg"
-        onPress={async () => navigation.navigate("login")}
+        onPress={() => navigation.navigate("login")}
         />
             <Button
         title="Signup"

@@ -19,9 +19,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { StyleSheet } from "react-native";
 
-const prod_example = "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg";
-// const prod_example = "https://cdn.creazilla.com/digital-illustrations/1683471/food-meal-delicious-illustration-lg.jpeg";
+const prod_example = "https://www.mealwize.com/static/images/M/cover.jpg";
 
+// type Props = {
+//     navigation: any;
+// }
 type Props = NativeStackScreenProps<RootStackParamList, "merchant">;
 
 const MerchantScreen: React.FC<Props> = ({ navigation }) => {
@@ -41,7 +43,6 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image source={{uri: prod_example}} style={{ width: "100%", height: 200 }} />
       {/* <Image
           source={merchant_banner}
           style={{ width: "100%", height:"auto", alignSelf: "center", justifyContent: 'center' }}
@@ -54,7 +55,7 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
           <View key={category.id} style={styles.categoryContainer}>
             <Text style={styles.categoryTitle}>{category.name}</Text>
             {category.products.map((product) => (
-              <Pressable key={product.id} >
+              <Pressable key={product.id} onPress={() => navigation.navigate('product', {id: product.id})} >
                 <Card containerStyle={styles.card}>
                   <View>
                     {/* <Image

@@ -16,6 +16,7 @@ const ProductScreen: React.FC <Props> = ({ navigation, route }) => {
     const user = useSelector((state: RootState) => state.user.user);
     const [expanded, setExpanded] = useState<boolean>(false);
     const dispatch = useDispatch<AppDispatch>();
+    const { id } = route.params;
     const { theme } = useTheme();
 
     useEffect(() => {
@@ -38,7 +39,7 @@ const ProductScreen: React.FC <Props> = ({ navigation, route }) => {
 
     return (
         <View>
-            <Text>Product Screen</Text>
+            <Text>Product Screen # {id}</Text>
         </View>
     );
 };

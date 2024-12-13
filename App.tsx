@@ -52,7 +52,7 @@ export type RootStackParamList = {
   landing: { merchantId: string; tableId: string };
   home: undefined;
   merchant: undefined;
-  product: undefined;
+  product: {id: any};
   basket: undefined;
   checkout: undefined;
   proccessing: undefined;

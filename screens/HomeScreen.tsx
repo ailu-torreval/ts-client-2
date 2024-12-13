@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
 
 
-
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
@@ -18,6 +17,25 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { theme } = useTheme();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
+  
+
+  useEffect(() => {
+    const parent = navigation.getParent();
+  
+    if (parent) {
+      parent.setOptions({
+        tabBarStyle: { display: 'flex',height: 70      },
+      });
+    }
+  
+    return () => {
+      if (parent) { 
+        parent.setOptions({
+          tabBarStyle: { display: 'flex',height: 70      },
+        });
+      }
+    };
+  }, [navigation]);
 
   useEffect(() => {
     (async () => {

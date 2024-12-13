@@ -25,9 +25,10 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
   tableId,
 }) => {
   const { theme } = useTheme();
+
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route, navigation }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -42,7 +43,9 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: "gray",
-        tabBarStyle: { height: 70 },
+        tabBarStyle: {
+          height: 70        
+        },
         tabBarItemStyle: { paddingBottom: 10, paddingTop: 10 },
         headerShown: false,
       })}
@@ -74,7 +77,7 @@ type HomeStackNavigatorProps = {
 const HomeStackNavigator: React.FC<HomeStackNavigatorProps> = ({
   merchantId,
   tableId,
-  navigation
+  navigation,
 }) => {
   useEffect(() => {
     if (merchantId && tableId) {

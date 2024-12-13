@@ -31,7 +31,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   function handleFabPress() {
     if (Platform.OS === 'web') {
-      navigation.navigate("landing");
+      const merchantId = '1';
+      const tableId = '1';
+      navigation.navigate("landing",{ merchantId, tableId });
       Toast.show({
         description: 'Camera access is not available on web.',
       });

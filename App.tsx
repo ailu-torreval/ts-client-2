@@ -49,7 +49,7 @@ export type RootStackParamList = {
   main: undefined;
   login: undefined;
   signup: undefined;
-  landing: undefined;
+  landing: { merchantId: string; tableId: string };
   home: undefined;
   merchant: undefined;
   product: undefined;
@@ -157,7 +157,15 @@ function AppContent() {
               </Stack.Group>
             ) : (
               <Stack.Group>
-                <Stack.Screen name="mainNav" component={MainNavigation} />
+                <Stack.Screen name="mainNav">
+                {props => (
+                    <MainNavigation
+                      {...props}
+                      merchantId={merchantId}
+                      tableId={tableId}
+                    />
+                  )}
+                </Stack.Screen>
               </Stack.Group>
             )
           ) : (

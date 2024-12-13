@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { logout } from "../store/userSlice";
-import * as SecureStore from "expo-secure-store";
 
 
 const ProfileScreen: React.FC = () => {
@@ -18,11 +17,6 @@ const ProfileScreen: React.FC = () => {
 
     async function handleLogout() {
         console.log("logout");
-        if (Platform.OS === "web") {
-            await localStorage.removeItem("token");
-          } else {
-             await SecureStore.deleteItemAsync("token");
-          }
         await dispatch(logout())
         setIsLogged(false);
       }

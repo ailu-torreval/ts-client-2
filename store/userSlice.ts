@@ -84,7 +84,11 @@ import { Platform } from "react-native";
   );
   
   export const logout = createAsyncThunk('logout', async () => {
+    if (Platform.OS === 'web') {
+      await localStorage.removeItem('token');
+    } else {
     await SecureStore.deleteItemAsync('token');
+    }
   });
   
   const userSlice = createSlice({

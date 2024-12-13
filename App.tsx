@@ -20,6 +20,7 @@ import MainNavigation from "./navigation/MainNavigation";
 import { createTheme, ThemeProvider, useTheme } from "@rneui/themed";
 import * as SecureStore from "expo-secure-store";
 import { NativeBaseProvider } from "native-base";
+import queryString from "query-string";
 
 const theme = createTheme({
   lightColors: {
@@ -80,7 +81,10 @@ export default function App() {
 function AppContent() {
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isGuest, setIsGuest] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.user.user);
+  const [merchantId, setMerchantId] = useState<any>(null);
+  const [tableId, setTableId] = useState<any>(null);
 
   const dispatch = useDispatch<AppDispatch>();
   const { theme } = useTheme();
@@ -110,6 +114,16 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
+    const urlParams = queryString.parse(window.location.search);
+    if (urlParams.merchantId && urlParams.tableId) {
+      console.log(urlParams);
+      setIsGuest(true);
+      setMerchantId(urlParams.merchantId);
+      setTableId(urlParams.tableId);
+    }
+  }, []);
+
+  useEffect(() => {
     if (user) {
       user.role === Role.Merchant_admin && setIsAdmin(true);
       console.log(user);
@@ -120,7 +134,7 @@ function AppContent() {
 
   return (
     <AuthContext.Provider
-      value={{ isLogged, setIsLogged, isAdmin, setIsAdmin }}
+      value={{ isLogged, setIsLogged, isAdmin, setIsAdmin, isGuest, setIsGuest }}
     >
       <NavigationContainer
         theme={{
@@ -136,7 +150,7 @@ function AppContent() {
         }}
       >
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {isLogged && user !== null ? (
+          {(isLogged && user !== null) || isGuest ? (
             isAdmin ? (
               <Stack.Group>
                 <Stack.Screen name="AdminNav" component={AdminNavigation} />

@@ -5,4 +5,6 @@ export const AuthContext = React.createContext({
   setIsLogged: (value: boolean) => {},
   isAdmin: false,
   setIsAdmin: (value: boolean) => {},
+  isGuest: false,
+  setIsGuest: (value: boolean) => {},
 });

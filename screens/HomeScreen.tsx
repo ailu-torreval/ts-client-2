@@ -5,12 +5,12 @@ import { Platform, SafeAreaView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { Image } from "react-native";
 import { Toast } from "native-base";
 import { useEffect, useState } from "react";
 import { Camera } from 'expo-camera';
+import CustomHeader from "../components/CustomHeader";
 
-const logo = require("../assets/logo-white.png");
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -31,6 +31,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   function handleFabPress() {
     if (Platform.OS === 'web') {
+      navigation.navigate("landing");
       Toast.show({
         description: 'Camera access is not available on web.',
       });
@@ -38,28 +39,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       // Open the camera
       setCameraVisible(true);
       console.log('Open camera');
+
     }  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-  leftComponent={
-    <Image
-    source={logo}
-    style={{ width: "150%", height:"150%", alignSelf: "center", justifyContent: 'center' }}
-    resizeMode="contain"
-    /> }
-  centerComponent={
-      <Text style={{ color: "#fff", fontWeight: 'bold', marginTop: 5,  fontSize: 18 }}>Table Service App</Text>
-  }
-  containerStyle={{
-    backgroundColor: theme.colors.primary,
-    justifyContent: 'space-around',
-    paddingTop: 10,
-    paddingBottom:25,
-    alignItems: 'center',
-  }}
-/>
+<CustomHeader screen="Home" />
+
   <View style={styles.wrapper}>
         <Text style={styles.title}>Hi {user?.firstname}!</Text>
 

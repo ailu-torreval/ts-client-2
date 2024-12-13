@@ -10,6 +10,7 @@ import MerchantScreen from "../screens/MerchantScreen";
 import ProductScreen from "../screens/ProductScreen";
 import BasketScreen from "../screens/BasketScreen";
 import ProccessingScreen from "../screens/ProccessingScreen";
+import LandingScreen from "../screens/LandingScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -54,6 +55,12 @@ const HomeStackNavigator = () => {
         headerBackVisible: false,
         headerShown: false,
     // header: props => <CustomHeader screen="home" />,
+  }}
+   />
+      <HomeStack.Screen name="landing" component={LandingScreen}   
+      options={{
+        headerBackVisible: false,
+        headerShown: false
   }}
    />
       <HomeStack.Screen name="merchant" component={MerchantScreen}

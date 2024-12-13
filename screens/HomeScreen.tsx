@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { Toast } from "native-base";
 import { useEffect, useState } from "react";
-import { Camera } from 'expo-camera';
 import CustomHeader from "../components/CustomHeader";
 
 
@@ -22,10 +21,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        setHasPermission(status === 'granted');
-      }
+      // if (Platform.OS !== 'web') {
+      //   const { status } = await Camera.requestCameraPermissionsAsync();
+      //   setHasPermission(status === 'granted');
+      // }
     })();
   }, []);
 

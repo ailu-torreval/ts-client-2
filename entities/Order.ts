@@ -2,7 +2,7 @@ import { ProductExtra, ProductOption } from "./Product";
 import { User } from "./User";
 
 export interface OrderProduct {
-    id: number;
+    id?: number | undefined;
     product_id: number;
     name: string;
     price: number;

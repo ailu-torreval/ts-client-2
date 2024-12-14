@@ -24,6 +24,7 @@ import {
 } from "native-base";
 import { StyleSheet } from "react-native";
 import { OrderProduct } from "../entities/Order";
+import { updateOrder } from "../store/orderSlice";
 
 type Props = NativeStackScreenProps<RootStackParamList, "product">;
 
@@ -31,6 +32,9 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
   const { setIsLogged } = React.useContext(AuthContext);
   const product = useSelector(
     (state: RootState) => state.merchant.selectedProduct
+  );
+  const order = useSelector(
+    (state: RootState) => state.order.order
   );
   const [orderProd, setOrderProd] = useState<Partial<OrderProduct> | null>(
     null
@@ -49,11 +53,12 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     if (product) {
-      setTotal(product.price);
+      console.log(product.is_offer, product.offer_price);
+      setTotal(product.is_offer ?  product.offer_price : product.price);
       setOrderProd((prevOrderProd) => ({
         ...prevOrderProd,
         product_id: product.id,
-        price: product.price,
+        price: product.is_offer ? product.offer_price : product.price,
       }));
       navigation.setOptions({
         headerTitle: product.name,
@@ -62,14 +67,6 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
       if (product.options && product.options.length > 0) {
         setGroupValue(product.options[0].id.toString());
       }
-
-      // Set default option
-      // if (product.options && product.options.length > 0) {
-      //   setOrderProd((prevOrderProd) => ({
-      //     ...prevOrderProd,
-      //     option: product?.options[0],
-      //   }));
-      // }
     }
   }, [product, navigation]);
 
@@ -89,6 +86,33 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
       setTotal(total);
     }
   }, [orderProd, counter]);
+
+    function handleButtonPress() {
+    let unitTotal = total / counter;
+    for (let i = 0; i < counter; i++) {
+      const orderProduct: OrderProduct = {
+        product_id: orderProd!.product_id!,
+        price: orderProd!.price!,
+        total_amount: unitTotal,
+        note: kitchenMsg,
+        id: undefined,
+        name: orderProd!.name!,
+        extras: orderProd!.extras!,
+        option: orderProd!.option!,
+      };
+      console.log(orderProduct);
+      if (orderProduct.id === undefined) {
+        delete orderProduct.id;
+      }
+    
+      dispatch(
+        updateOrder({
+          order_products: [...(order?.order_products ?? []), orderProduct],
+        })
+      );
+    }
+    navigation.goBack();  
+  }
 
   return (
     <>
@@ -234,6 +258,7 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
           </View>
           <Button
+            onPress={handleButtonPress}
             buttonStyle={{
               height: 65,
             }}
@@ -318,18 +343,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     padding: 10,
-    // height:100
-    // other button styles
   },
-  // btn: {
-  //   padding: 10,
-  //   position: 'absolute',
-  //   bottom: 0,
-  //   width: '100%',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-
-  // }
 });
 
 export default ProductScreen;

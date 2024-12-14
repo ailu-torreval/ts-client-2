@@ -1,4 +1,4 @@
-import { Card, Icon, ListItem, useTheme } from "@rneui/themed";
+import { Button, Card, Icon, ListItem, useTheme } from "@rneui/themed";
 import {
   View,
   Text,
@@ -17,7 +17,6 @@ import { RootStackParamList } from "../App";
 import { StyleSheet } from "react-native";
 import { MenuCat } from "../entities/MenuCat";
 
-
 const prod_example = "https://www.mealwize.com/static/images/M/cover.jpg";
 
 // type Props = {
@@ -34,6 +33,7 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
   const [selected, setSelected] = useState<any>(null);
   const categoryRefs = useRef<{ [key: string]: any }>({});
   const scrollViewRef = useRef<ScrollView>(null);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     navigation.setOptions({
@@ -42,6 +42,24 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
     setSelected(merchant?.menu_cats[0]);
     console.log(merchant);
   }, [navigation]);
+
+  useEffect(() => {
+    console.log("orderUpdated", order);
+    if (order?.order_products) {
+      calculateTotal();
+    }
+  }, [order]);
+
+  function calculateTotal() {
+    let total = 0;
+    if (order?.order_products) {
+      total = order.order_products.reduce(
+        (acc, product) => acc + product.total_amount,
+        0
+      );
+    }
+    setTotal(total);
+  }
 
   function handleMenuPress(menu: MenuCat) {
     setSelected(menu);
@@ -106,14 +124,23 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.categoryTitle}>{category.name}</Text>
             {category.products.map((product) => {
               const randomNumber = Math.floor(Math.random() * 7) + 1;
+              const isInOrder = order?.order_products?.some(
+                (orderProduct) => orderProduct.product_id === product.id
+              );
               return (
                 <TouchableOpacity
                   key={product.id}
                   onPress={() =>
-                    navigation.navigate("product", { id: product.id, imgId: randomNumber })
+                    navigation.navigate("product", {
+                      id: product.id,
+                      imgId: randomNumber,
+                    })
                   }
                 >
-                  <View style={styles.cardContent}>
+                  <View style={[
+                styles.cardContent,
+                isInOrder && styles.selected,
+              ]}>
                     <Image
                       source={{ uri: getRandomImageUri(randomNumber) }}
                       style={styles.productImage}
@@ -145,6 +172,20 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         ))}
       </ScrollView>
+      {order?.order_products && order.order_products.length > 0 && (
+        <Button
+        buttonStyle={{
+          height: 65,
+        }}
+        size="lg"
+        style={styles.btn}
+          onPress={() => navigation.navigate("basket")}
+        >
+          <Text style={{  color: "white", fontSize:22  }}>
+            View Basket - {total}kr.
+          </Text>
+        </Button>
+      )}
     </SafeAreaView>
   );
 };
@@ -243,6 +284,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-end",
+  },
+  selected: {
+    borderRightColor: "#F39200",
+    borderRightWidth: 3,
+  },
+  btn: {
+    padding: 10,
   },
 });
 

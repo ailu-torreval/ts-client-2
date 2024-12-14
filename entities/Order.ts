@@ -8,6 +8,8 @@ export interface OrderProduct {
     price: number;
     total_amount: number;
     note: string;
+    extras_id?: number[] | null;
+    option_id?: number | null;
     extras?: ProductExtra[]
     option?: ProductOption;
 }

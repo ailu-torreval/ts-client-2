@@ -81,6 +81,22 @@ const orderSlice = createSlice({
     clearOrder: (state) => {
       state.order = null;
     },
+    prepareOrder: (state) => {
+      if (state.order && state.order.order_products) {
+        state.order.order_products.forEach((orderProd) => {
+          // Handle option
+          if (orderProd.option) {
+            orderProd.option_id = orderProd.option.id;
+          }
+          if (orderProd.extras && orderProd.extras.length > 0) {
+            orderProd.extras_ids = orderProd.extras.map((extra) => extra.id);
+          }
+          delete orderProd.option;
+          delete orderProd.extras;
+        });
+        console.log(state.order);
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -104,4 +120,5 @@ export const { addOrderProduct } = orderSlice.actions;
 export const { removeOrderProduct } = orderSlice.actions;
 export const { updateOrder } = orderSlice.actions;
 export const { clearOrder } = orderSlice.actions;
+export const { prepareOrder } = orderSlice.actions;
 export default orderSlice.reducer;

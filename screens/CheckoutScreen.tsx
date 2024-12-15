@@ -10,6 +10,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FormControl, Input, ScrollView, VStack, Icon } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
+import { prepareOrder } from "../store/orderSlice";
 
 type CardDetails = {
   cardNr: string;
@@ -20,7 +21,7 @@ type CardDetails = {
 
 type Props = NativeStackScreenProps<RootStackParamList, "checkout">;
 
-const CheckoutScreen: React.FC<Props> = ({ navigation, route }) => {
+const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
   const { isLogged } = React.useContext(AuthContext);
   const dispatch = useDispatch<AppDispatch>();
   const { theme } = useTheme();
@@ -62,22 +63,37 @@ const CheckoutScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   }, [cardDetails]);
 
+  function handlePayment() {
+    console.log("Payment", cardDetails);
+    dispatch(prepareOrder());
+    // navigation.navigate("landing");
+    console.log("FROM CHECKOUT", order);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View>
-          <Text>
-            Service at {merchant?.merchant?.name} 
+        <View style={styles.headerWrap}>
+          <Text style={styles.headerText}>
+            Service at {merchant?.merchant?.name}
           </Text>
           {!merchant?.merchant?.is_table_service ? (
             <>
-            <Text>Self Service</Text>
-            <Text>We will send you a notification when the order is ready to pick up at the counter.</Text>
+              <Text style={styles.subHeaderText}>Self Service</Text>
+              <Text style={styles.bodyText}>
+                We will send you a notification when the order is ready to pick
+                up at the counter.
+              </Text>
             </>
           ) : (
             <>
-            <Text>Table Service</Text>
-            <Text>Our staff will bring the order to your table (Table Nr. {order?.table_id}).</Text>
+              <Text style={styles.subHeaderText}>Table Service</Text>
+              <Text style={styles.bodyText}>
+                Our staff will bring the order to your table when it's ready.
+              </Text>
+              <Text style={[styles.bodyText, { fontWeight: "bold" }]}>
+                Table Nr. {order?.table_id}
+              </Text>
             </>
           )}
         </View>
@@ -193,7 +209,7 @@ const CheckoutScreen: React.FC<Props> = ({ navigation, route }) => {
         size="lg"
         disabled={!isFormValid}
         style={styles.btn}
-        onPress={() => navigation.navigate("basket")}
+        onPress={handlePayment}
       >
         <Text style={{ color: "white", fontSize: 22 }}>Pay - {total}kr.</Text>
       </Button>
@@ -208,14 +224,16 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-  cardContent: {
-    backgroundColor: "#FFF",
-    marginBottom: 5,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flex: 1,
+  headerWrap: {
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    margin: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   productName: {
     textTransform: "capitalize",
@@ -228,39 +246,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 20,
     paddingVertical: 20,
-    width: 350,
-  },
-  prodTotal: {
-    paddingTop: 5,
-    paddingBottom: 5,
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#F39200",
-    textAlign: "right",
-  },
-  prodGrid: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    paddingTop: 5,
-    paddingBottom: 5,
-  },
-  productDetails: {
-    flex: 1,
-    flexShrink: 1,
-    paddingRight: 5,
-    paddingLeft: 5,
-    paddingTop: 5,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  productImage: {
-    width: "30%",
-    height: 130,
   },
   title: {
     fontSize: 24,
@@ -272,5 +257,26 @@ const styles = StyleSheet.create({
   },
   btn: {
     padding: 10,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
+    textAlign: "center",
+  },
+  subHeaderText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 15,
+    textAlign: "center",
+    color: "#F39200",
+  },
+  bodyText: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#666",
+    marginBottom: 10,
   },
 });

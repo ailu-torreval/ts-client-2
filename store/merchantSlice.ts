@@ -5,6 +5,7 @@ import { Product } from "../entities/Product";
 
 export interface MerchantState {
   merchant: Merchant | null;
+  suggested_products: Product[] | null;
   selectedProduct: Product | null;
   loading: boolean;
   error: string | null;
@@ -12,6 +13,7 @@ export interface MerchantState {
 
 const initialState: MerchantState = {
   merchant: null,
+  suggested_products: null,
   selectedProduct: null,
   loading: false,
   error: null,
@@ -64,7 +66,8 @@ const merchantSlice = createSlice({
       })
       .addCase(fetchMerchant.fulfilled, (state, action) => {
         state.loading = false;
-        state.merchant = action.payload;
+        state.merchant = action.payload.merchant;
+        state.suggested_products = action.payload.suggested_products;
       })
       .addCase(fetchMerchant.rejected, (state, action) => {
         state.loading = false;

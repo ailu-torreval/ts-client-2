@@ -51,9 +51,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       const merchantId = '1';
       const tableId = '1';
       navigation.navigate("landing",{ merchantId, tableId });
-      Toast.show({
-        description: 'Camera access is not available on web.',
-      });
+      // Toast.show({
+      //   description: 'Camera access is not available on web.',
+      // });
     } else {
       // Open the camera
       setCameraVisible(true);

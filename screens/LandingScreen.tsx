@@ -9,7 +9,7 @@ import CustomHeader from "../components/CustomHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchMerchant } from "../store/merchantSlice";
-import { updateOrder } from "../store/orderSlice";
+import { clearOrder, updateOrder } from "../store/orderSlice";
 import { AuthContext } from "../store/AuthContext";
 import { Button, useTheme } from "@rneui/themed";
 
@@ -62,6 +62,11 @@ const LandingScreen: React.FC<Props> = ({ navigation, route }) => {
     setIsGuest(false);
   }
 
+  function handleBack() {
+    navigation.navigate("homescreen");
+    dispatch(clearOrder());
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader screen="landing" />
@@ -89,7 +94,7 @@ const LandingScreen: React.FC<Props> = ({ navigation, route }) => {
           />
         </View>
           <Button size="lg"
-            onPress={() => navigation.navigate("homescreen")}
+            onPress={handleBack}
             type="clear"
             title="Back to Home"
           />

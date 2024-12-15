@@ -8,6 +8,11 @@ export interface MerchantTable {
     is_active: boolean;
 }
 
+export interface MerchantResponse {
+  merchant: Merchant;
+  suggested_products: Product[];
+}
+
 export class Merchant {
   id?: number;
   admin_id: number;

@@ -17,7 +17,6 @@ import { RootStackParamList } from "../App";
 import { StyleSheet } from "react-native";
 import { MenuCat } from "../entities/MenuCat";
 
-const prod_example = "https://www.mealwize.com/static/images/M/cover.jpg";
 
 // type Props = {
 //     navigation: any;
@@ -28,7 +27,6 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
   const { setIsLogged } = React.useContext(AuthContext);
   const merchant = useSelector((state: RootState) => state.merchant.merchant);
   const order = useSelector((state: RootState) => state.order.order);
-  const { theme } = useTheme();
   const dispatch = useDispatch<AppDispatch>();
   const [selected, setSelected] = useState<any>(null);
   const categoryRefs = useRef<{ [key: string]: any }>({});
@@ -44,9 +42,9 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
   }, [navigation]);
 
   useEffect(() => {
-    console.log("orderUpdated", order);
     if (order?.order_products) {
       calculateTotal();
+      console.log("order updated from emrchant page")
     }
   }, [order]);
 
@@ -142,7 +140,7 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
                 isInOrder && styles.selected,
               ]}>
                     <Image
-                      source={{ uri: getRandomImageUri(randomNumber) }}
+                      source={{uri:"https://ailu-torreval.github.io/imgs/assets/4.png"}}
                       style={styles.productImage}
                     />
                     <View style={styles.productDetails}>

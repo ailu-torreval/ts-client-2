@@ -1,35 +1,26 @@
-import { Button, CheckBox, Icon, ListItem, useTheme } from "@rneui/themed";
+import { Button, CheckBox, Icon } from "@rneui/themed";
 import {
   View,
   Text,
-  TouchableHighlight,
-  Platform,
   SafeAreaView,
   Image,
   Pressable,
 } from "react-native";
-import { AuthContext } from "../store/AuthContext";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { fetchProduct } from "../store/merchantSlice";
-import {
-  Container,
-  FormControl,
-  Input,
-  ScrollView,
-  WarningOutlineIcon,
-} from "native-base";
+import {  Input, ScrollView } from "native-base";
 import { StyleSheet } from "react-native";
 import { OrderProduct } from "../entities/Order";
-import { updateOrder } from "../store/orderSlice";
+import { addOrderProduct, updateOrder } from "../store/orderSlice";
 
 type Props = NativeStackScreenProps<RootStackParamList, "product">;
 
 const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { setIsLogged } = React.useContext(AuthContext);
+  const { id, imgId } = route.params;
   const product = useSelector(
     (state: RootState) => state.merchant.selectedProduct
   );
@@ -41,11 +32,9 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
   );
   const [counter, setCounter] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
-  const dispatch = useDispatch<AppDispatch>();
-  const { id, imgId } = route.params;
-  const { theme } = useTheme();
   const [groupValue, setGroupValue] = useState("");
   const [kitchenMsg, setKitchenMsg] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(fetchProduct(id));
@@ -59,6 +48,7 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
         ...prevOrderProd,
         product_id: product.id,
         price: product.is_offer ? product.offer_price : product.price,
+        name: product.name,
       }));
       navigation.setOptions({
         headerTitle: product.name,
@@ -67,6 +57,18 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
       if (product.options && product.options.length > 0) {
         setGroupValue(product.options[0].id.toString());
       }
+
+      if(product?.has_options && orderProd?.option === undefined && product.options && product.options.length > 0) {
+        console.log("from product sddkjsfhioewhfo", groupValue);
+      const option = product.options[0];
+      console.log("OPTTT", option)
+      setOrderProd((prevOrderProd) => ({
+        ...prevOrderProd,
+        option: option,
+      }
+      ));
+      }
+      console.log("AFTER UPDATE", orderProd);
     }
   }, [product, navigation]);
 
@@ -89,6 +91,7 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
 
     function handleButtonPress() {
     let unitTotal = total / counter;
+
     for (let i = 0; i < counter; i++) {
       const orderProduct: OrderProduct = {
         product_id: orderProd!.product_id!,
@@ -104,12 +107,9 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
       if (orderProduct.id === undefined) {
         delete orderProduct.id;
       }
-    
-      dispatch(
-        updateOrder({
-          order_products: [...(order?.order_products ?? []), orderProduct],
-        })
-      );
+      console.log("from product screen", orderProduct);
+
+      dispatch(addOrderProduct(orderProduct));
     }
     navigation.goBack();  
   }
@@ -123,7 +123,7 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
 
           <Image
             source={{
-              uri: `https://ailu-torreval.github.io/imgs/assets/${imgId}.png`,
+              uri: "https://ailu-torreval.github.io/imgs/assets/4.png",
             }}
             style={styles.productImage}
           />
@@ -325,6 +325,7 @@ const styles = StyleSheet.create({
     paddingTop: 22,
     paddingLeft:10,
     marginBottom: 10,
+    textTransform: "capitalize",
   },
   title: {
     fontSize: 24,

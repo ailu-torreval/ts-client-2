@@ -140,6 +140,7 @@ const HomeStackNavigator: React.FC<HomeStackNavigatorProps> = ({
         component={ProccessingScreen}
         options={{
           headerBackVisible: false,
+          headerShown: false
         }}
       />
     </HomeStack.Navigator>

@@ -21,7 +21,7 @@ export class Order {
   table_id: number | null;
   payment_method: number | null; // 0 = card, 1 = Mobilepay
   payment_ref: number | null;
-  date: Date | null;
+  date: string | null;
   total_amount: number | null;
   order_status: string | null; // 'pending', 'completed', 'cancelled' etc.
   user?: Partial<User> | null;
@@ -35,7 +35,7 @@ export class Order {
     table_id: number,
     payment_method: number,
     payment_ref: number,
-    date: Date,
+    date: string,
     total_amount: number,
     order_status: string,
     order_products: OrderProduct[],

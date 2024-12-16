@@ -31,10 +31,12 @@ export const createOrder = createAsyncThunk(
   "order",
   async (order: Order, thunkAPI) => {
     try {
+      console.log("order from thunk", order);
       const response = OrderAPI.createOrder(order);
       return response;
     } catch (error) {
       if (error instanceof Error) {
+        console.log("error from slice", error.message);
         return thunkAPI.rejectWithValue(error.message);
       }
       return thunkAPI.rejectWithValue("An unknown error occurred");
@@ -83,6 +85,7 @@ const orderSlice = createSlice({
     },
     prepareOrder: (state) => {
       if (state.order && state.order.order_products) {
+        
         state.order.order_products.forEach((orderProd) => {
           // Handle option
           if (orderProd.option) {
@@ -96,6 +99,9 @@ const orderSlice = createSlice({
         });
         console.log(state.order);
       }
+    }, 
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -105,13 +111,14 @@ const orderSlice = createSlice({
         state.error = null;
       })
       .addCase(createOrder.fulfilled, (state, action) => {
+        console.log("order created", action.payload);
         state.loading = false;
         state.order = action.payload.order;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-        console.log("state", state);
+        console.log("error from slice", state.error);
       });
   },
 });
@@ -121,4 +128,5 @@ export const { removeOrderProduct } = orderSlice.actions;
 export const { updateOrder } = orderSlice.actions;
 export const { clearOrder } = orderSlice.actions;
 export const { prepareOrder } = orderSlice.actions;
+export const { setLoading } = orderSlice.actions;
 export default orderSlice.reducer;

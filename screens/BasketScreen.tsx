@@ -185,7 +185,7 @@ const BasketProduct: React.FC<{ product: OrderProduct }> = ({ product }) => {
                 }}
                 key={`x_${extra.id}`}
               >
-                <Text>{extra.name}</Text>
+                <Text style={{textTransform: "capitalize"}}>{extra.name}</Text>
                 <Text>+{extra.price} kr.</Text>
               </View>
             ))}

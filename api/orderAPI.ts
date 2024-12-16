@@ -10,9 +10,12 @@ export class OrderAPI extends SuperQueries {
     try {
       const response = await axios.post(this.orderUrl, order);
       return response.data;
-    } catch (error) {
-      console.log("error fetching merchant", error);
-      throw error;
+    } catch (error: any) {
+      if (error instanceof Error) {
+        console.log("error posting order", error.message);
+      } else {
+        console.log("error posting order", error);
+      }      throw error;
     }
   }
 }

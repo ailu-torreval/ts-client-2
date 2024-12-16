@@ -8,9 +8,11 @@ import { AppDispatch, RootState } from "../store/store";
 import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FormControl, Input, ScrollView, VStack, Icon } from "native-base";
+import { FormControl, Input, ScrollView, VStack, Icon, Toast } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
-import { prepareOrder } from "../store/orderSlice";
+import { createOrder, prepareOrder, setLoading, updateOrder } from "../store/orderSlice";
+import { Order } from "../entities/Order";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 type CardDetails = {
   cardNr: string;
@@ -26,6 +28,8 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { theme } = useTheme();
   const order = useSelector((state: RootState) => state.order.order);
+  const orderState = useSelector((state: RootState) => state.order.loading);
+  const user = useSelector((state: RootState) => state.user.user);
   const merchant = useSelector((state: RootState) => state.merchant);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [cardDetails, setCardDetails] = useState<CardDetails>({
@@ -39,13 +43,18 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     if (order?.order_products) {
-      console.log("order in basket", order);
-      let total = 0;
-      total = order.order_products.reduce(
-        (acc, product) => acc + product.total_amount,
-        0
-      );
-      setTotal(total);
+      if(order.date === null) {
+
+        console.log("order in basket", order);
+        let total = 0;
+        total = order.order_products.reduce(
+          (acc, product) => acc + product.total_amount,
+          0
+        );
+        setTotal(total);
+      } else {
+        handleOrder(order);
+      }
     }
   }, [order]);
 
@@ -63,11 +72,41 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [cardDetails]);
 
-  function handlePayment() {
+  function createRandomUuid() {
+    return Math.floor(1000 + Math.random() * 9000);
+  }
+
+  async function handlePayment() {
+    dispatch(setLoading(true)); 
+    const total_amount = total;
     console.log("Payment", cardDetails);
-    dispatch(prepareOrder());
-    // navigation.navigate("landing");
-    console.log("FROM CHECKOUT", order);
+    await dispatch(prepareOrder());
+    
+    const orderDetails: Partial<Order> = {
+      id: null,
+      contact_method: merchant?.merchant?.is_table_service ? 0 : 1,
+      date: new Date().toISOString(),
+      order_status: "pending",
+      payment_method: 0,
+      total_amount: total_amount,
+      payment_ref: createRandomUuid(),
+      user_id: isLogged ? user?.id : null,
+    };
+    await dispatch(updateOrder(orderDetails));
+
+  }
+
+  async function handleOrder(order:Partial<Order>) {
+    try {
+      const resultAction = await dispatch(createOrder(order as Order));
+      unwrapResult(resultAction);
+      navigation.navigate("proccessing");
+    } catch (error) {
+      Toast.show({
+        description: "Something went wrong, please try again.",
+      });
+      console.log("error posting order", error);
+    }
   }
 
   return (
@@ -97,6 +136,13 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
             </>
           )}
         </View>
+        {!merchant.merchant?.is_table_service && (
+          <View>
+            <Text style={styles.headerText}>
+              check if the user has notification token for push notif
+            </Text>
+          </View>
+        )}
         <View>
           <Text style={styles.title}>Payment Details</Text>
           <View style={styles.content}>
@@ -206,6 +252,10 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
         buttonStyle={{
           height: 65,
         }}
+        loading={orderState}
+              loadingProps={{
+                size: 'small',
+                color: 'white',}}
         size="lg"
         disabled={!isFormValid}
         style={styles.btn}

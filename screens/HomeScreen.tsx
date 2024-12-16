@@ -8,13 +8,6 @@ import { RootState } from "../store/store";
 import { Toast } from "native-base";
 import { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
-import { io } from "socket.io-client";
-
-// const socket = io('http://localhost:3000', {
-//   withCredentials: true,
-//   transports: ['websocket', 'polling'], // Use both websocket and polling transports
-// });
-
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -43,30 +36,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     };
   }, [navigation]);
 
-
-  // testing socket.io
-  // useEffect(() => {
-  //   console.log("from line 31")
-  //     socket.emit('joinOrderRoom', "123");
-
-  //   socket.on('connect', () => {
-  //     console.log('Connected to the server');
-  //   });
-
-  //   socket.on('orderAccepted', (data) => {
-  //       console.log('Order accepted:', data);
-  //   });
-
-  //   socket.on('disconnect', () => {
-  //     console.log('Disconnected from the server');
-  //   });
-
-  //   return () => {
-  //     socket.off('connect');
-  //     socket.off('orderAccepted');
-  //     socket.off('disconnect');
-  //   };
-  // }, []);
 
   useEffect(() => {
     (async () => {

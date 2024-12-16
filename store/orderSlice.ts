@@ -85,7 +85,7 @@ const orderSlice = createSlice({
     },
     prepareOrder: (state) => {
       if (state.order && state.order.order_products) {
-        
+
         state.order.order_products.forEach((orderProd) => {
           // Handle option
           if (orderProd.option) {
@@ -113,7 +113,7 @@ const orderSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         console.log("order created", action.payload);
         state.loading = false;
-        state.order = action.payload.order;
+        state.order = action.payload;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;

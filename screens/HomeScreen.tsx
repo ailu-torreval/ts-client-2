@@ -59,7 +59,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-<CustomHeader screen="Home" />
+<CustomHeader title="Tble Service App" />
 
   <View style={styles.wrapper}>
         <Text style={styles.title}>Hi {user.user?.firstname}!</Text>

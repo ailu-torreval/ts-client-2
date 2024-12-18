@@ -2,7 +2,6 @@ import {
     createSlice,
     createAsyncThunk,
     PayloadAction,
-    createAction,
   } from "@reduxjs/toolkit";
 
 import * as SecureStore from 'expo-secure-store';
@@ -85,6 +84,7 @@ import { Order } from "../entities/Order";
       }
     }
   );
+  
   
   export const logout = createAsyncThunk('logout', async () => {
     if (Platform.OS === 'web') {

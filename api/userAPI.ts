@@ -36,6 +36,7 @@ export class UserAPI extends SuperQueries {
     }
   }
 
+
   static async signup(signupUserDto: SignupUserDto) {
     try {
       const signupUser = await axios.post(this.authUrl + "/signup", signupUserDto);

@@ -60,7 +60,7 @@ export type RootStackParamList = {
   profile: undefined;
   mainNav: undefined;
   homescreen: undefined;
-  adminHome:undefined;
+  adminHomeScreen:undefined;
   adminProfile: undefined;
 };
 

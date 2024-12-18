@@ -5,10 +5,10 @@ import { Image } from "react-native";
 const logo = require("../assets/logo-white.png");
 
 type Props = {
-    screen: string
+    title: string
 }
 
-const CustomHeader: React.FC<Props> = ({screen}) => {
+const CustomHeader: React.FC<Props> = ({title}) => {
     const { theme } = useTheme();
 
     return (
@@ -20,7 +20,7 @@ const CustomHeader: React.FC<Props> = ({screen}) => {
           resizeMode="contain"
           /> }
         centerComponent={
-            <Text style={{ color: "#fff", fontWeight: 'bold', marginTop: 5,  fontSize: 18 }}>Table Service App</Text>
+            <Text style={{ color: "#fff", fontWeight: 'bold', marginTop: 5,  fontSize: 18 }}>{title}</Text>
         }
         containerStyle={{
           backgroundColor: theme.colors.primary,

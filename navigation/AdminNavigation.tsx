@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon, useTheme } from "@rneui/themed";
 import React from "react";
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import AdminHomeScreen from "../screens/AdminHomescreen";
 import AdminProfileScreen from "../screens/AdminProfileScreen";
+import AdminHomeScreen from "../screens/AdminHomescreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -34,7 +34,7 @@ const AdminNavigation: React.FC = () => {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={AdminHomeScreen} />
+      <Tab.Screen name="home" component={AdminHomeScreen} />
       <Tab.Screen name="Profile" component={AdminProfileScreen} />
     </Tab.Navigator>
   );

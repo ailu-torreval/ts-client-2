@@ -69,7 +69,7 @@ const LandingScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader screen="landing" />
+      <CustomHeader title="Tble Service App" />
       <View style={styles.wrapper}>
         <View>
           <Text style={styles.title}>Place your order for</Text>

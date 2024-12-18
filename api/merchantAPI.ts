@@ -16,9 +16,37 @@ export class MerchantAPI extends SuperQueries {
   }
 
 
+  static async getAdminMerchant(token:string) {
+    console.log("user api 40", token)
+    try {
+      const response = await axios.get(super.baseUrl + "auth/adminProfile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.log("error login",super.baseUrl, error);
+      throw error;
+    }
+  }
+
+
   static async fetchProduct(id:number) {
     try {
       const response = await axios.get(super.baseUrl + "product/" + id);
+      return response.data;
+    } catch (error) {
+      console.log("error fetching merchant", error);
+      throw error;
+    }
+  }
+
+
+  static async changeOrderStatus(id:number, status:string) {
+    try {
+      console.log("changeOrderStatus", id, status)
+      const response = await axios.patch(super.baseUrl + "order/status/" + id, {status});
       return response.data;
     } catch (error) {
       console.log("error fetching merchant", error);

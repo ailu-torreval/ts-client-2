@@ -24,7 +24,7 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
   const { setIsLogged } = React.useContext(AuthContext);
   const order = useSelector((state: RootState) => state.order.order);
   const { theme } = useTheme();
-  const [status, setStatus] = useState<"pending" | "accepted" | "rejected">(
+  const [status, setStatus] = useState<"pending" | "accepted" | "declined">(
     "pending"
   );
   const dispatch = useDispatch<AppDispatch>();

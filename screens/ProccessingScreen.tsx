@@ -1,22 +1,21 @@
-import { Icon, ListItem, useTheme } from "@rneui/themed";
-import { View, Text, TouchableHighlight, Platform, Image } from "react-native";
+import { Button, Icon, useTheme } from "@rneui/themed";
+import { View, Text, Image } from "react-native";
 import { AuthContext } from "../store/AuthContext";
-import React, { useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { logout } from "../store/userSlice";
-import * as SecureStore from "expo-secure-store";
 import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Spinner } from "native-base";
 import { StyleSheet } from "react-native";
 import { io } from "socket.io-client";
+import { RingLoader, RiseLoader } from "react-spinners";
+import { resetOrder, updateOrder } from "../store/orderSlice";
 
 // const socket = io('https://ts-server-production-1986.up.railway.app');
-const socket = io('http://localhost:3000', {
+const socket = io("http://localhost:3000", {
   withCredentials: true,
-  transports: ['websocket', 'polling'], // Use both websocket and polling transports
+  transports: ["websocket", "polling"],
 });
 
 type Props = NativeStackScreenProps<RootStackParamList, "proccessing">;
@@ -28,6 +27,7 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
   const [status, setStatus] = useState<"pending" | "accepted" | "rejected">(
     "pending"
   );
+  const dispatch = useDispatch<AppDispatch>();
 
 
   useEffect(() => {
@@ -40,11 +40,12 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
       console.log('Connected to the server');
     });
 
-    socket.on('orderAccepted', (data) => {
-      console.log('Received orderAccepted event', data);
+    socket.on('orderChanged', (data) => {
+      console.log('Received orderChanged event', data);
       if (data.orderId == order?.id) {
-        console.log('Order accepted:', data);
-        setStatus('accepted');
+        console.log('Order changed:', data);
+        setStatus(data.status);
+        dispatch(updateOrder({order_status: data.status}));
         // Handle the order accepted event (e.g., update UI)
       }
     });
@@ -55,72 +56,64 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
 
     return () => {
       socket.off('connect');
-      socket.off('orderAccepted');
+      socket.off('orderChanged');
       socket.off('disconnect');
     };
   }, [order]);
 
-  // // Handle connection event
-  // socket.on("connect", () => {
-  //   console.log("Connected to the server");
-
-  //   // Join a room for a specific order
-  //   const orderId = "123"; // Replace with the actual order ID
-  //   // socket.emit("joinOrderRoom", order?.id);
-  //   socket.emit("joinOrderRoom", orderId);
-
-  //   // Handle order accepted event
-  //   socket.on("orderAccepted", (data) => {
-  //     console.log("Order accepted:", data);
-  //     // Handle the order accepted event (e.g., update UI)
-  //   });
-  // });
-
-  // // Handle disconnection event
-  // socket.on("disconnect", () => {
-  //   console.log("Disconnected from the server");
-  // });
-
-  // useEffect(() => {
-  //     const parent = navigation.getParent();
-
-  //     if (parent) {
-  //       parent.setOptions({
-  //         tabBarStyle: { display: 'none'},
-  //       });
-  //     }
-
-  //     return () => {
-  //       if (parent) {
-  //         parent.setOptions({
-  //           tabBarStyle: { display: 'none'},
-  //         });
-  //       }
-  //     };
-  //   }, [navigation]);
 
   useEffect(() => {
     console.log("order in proccessing", order);
   }, []);
 
+  async function handleFinishOrder() {
+    await dispatch(resetOrder());
+    navigation.navigate("homescreen");
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View>
+      <View style={styles.container}>
         {status === "pending" && (
           <>
-            <Spinner size="lg" color="#45A47D" />
-            <Text>Waiting for kitchen...</Text>
+            <View style={styles.centeredContent1}>
+              <RiseLoader
+                // style={{ marginTop: 50 }}
+                color="#8fc8b1"
+                loading={status === "pending"}
+                size={30}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+              <Text style={[styles.text, {marginTop: 20}]}>Waiting for kitchen...</Text>
+            </View>
           </>
         )}
         {status === "accepted" && (
           <>
-            <Image
-              source={{
-                uri: "https://ailu-torreval.github.io/imgs/assets/food-illustration.png",
-              }}
-              style={styles.productImage}
-            />
-            <Text>Your order is being prepared...</Text>
+            <View style={styles.centeredContent}>
+              <Image
+                source={{
+                  uri: "https://ailu-torreval.github.io/imgs/assets/food-illustration.png",
+                }}
+                style={styles.productImage}
+              />
+              <Text style={styles.text}>Order Accepted!</Text>
+              <Text style={styles.text2}>
+                Just relax! We will bring your order soon!
+              </Text>
+              <Button
+                style={{ marginTop: 50 }}
+                onPress={handleFinishOrder}
+              >
+                <Icon
+                  color="white"
+                  style={{ paddingRight: 10, color: theme.colors.secondary }}
+                  name="home"
+                />
+                Back to Home
+              </Button>
+            </View>
           </>
         )}
       </View>
@@ -136,7 +129,31 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   productImage: {
-    width: "100%",
-    height: 200,
+    marginTop: 50,
+    width: "70%",
+    height: 250,
+  },
+  text: {
+    marginTop: 50,
+    color: "#F39200",
+    textAlign: "center",
+    fontSize: 29,
+    fontWeight: "bold",
+  },
+  text2: {
+    marginTop: 50,
+    textAlign: "center",
+    fontSize: 20,
+  },
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centeredContent1: {
+    flex: 1,
+    justifyContent: "center",
+    gap: 35,
+    alignItems: "center",
   },
 });

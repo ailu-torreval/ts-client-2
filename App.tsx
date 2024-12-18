@@ -21,6 +21,7 @@ import { createTheme, ThemeProvider, useTheme } from "@rneui/themed";
 import * as SecureStore from "expo-secure-store";
 import { NativeBaseProvider } from "native-base";
 import queryString from "query-string";
+import AdminNavigation from "./navigation/AdminNavigation";
 
 const theme = createTheme({
   lightColors: {
@@ -59,11 +60,8 @@ export type RootStackParamList = {
   profile: undefined;
   mainNav: undefined;
   homescreen: undefined;
-  tables: undefined;
-  products: undefined;
-  // adminHome:undefined;
-  // adminProfile: undefined;
-  // services: undefined;
+  adminHome:undefined;
+  adminProfile: undefined;
 };
 
 export default function App() {

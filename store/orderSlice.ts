@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Order, OrderProduct } from "../entities/Order";
 import { OrderAPI } from "../api/orderAPI";
+import { AppDispatch, RootState } from "./store";
+import { addOrder } from "./userSlice";
 
 export interface OrderState {
   order: Partial<Order> | null;
@@ -41,6 +43,32 @@ export const createOrder = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue("An unknown error occurred");
     }
+  }
+);
+
+export const resetOrder = createAsyncThunk(
+  'order/resetOrder',
+  async (_, { dispatch, getState }) => {
+    const state = getState() as RootState;
+    if (state.order) {
+      console.log("STATE ORDER", state.order)
+      await dispatch(addOrder(state.order.order as Order));
+      return {
+        id: null,
+        merchant_id: null,
+        contact_method: null,
+        table_id: null,
+        payment_method: null,
+        payment_ref: null,
+        date: null,
+        total_amount: null,
+        order_status: null,
+        user: null,
+        user_id: null,
+        order_products: null,
+      };
+    }
+    return null;
   }
 );
 
@@ -99,7 +127,7 @@ const orderSlice = createSlice({
         });
         console.log(state.order);
       }
-    }, 
+    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     }
@@ -119,6 +147,9 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         console.log("error from slice", state.error);
+      })
+      .addCase(resetOrder.fulfilled, (state, action: PayloadAction<Order | null>) => {
+        state.order = action.payload;
       });
   },
 });

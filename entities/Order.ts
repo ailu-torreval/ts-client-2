@@ -27,6 +27,7 @@ export class Order {
   user?: Partial<User> | null;
   user_id?: number | null;
   order_products: OrderProduct[] | null;
+  products?: OrderProduct[] | null;
 
   constructor(
     id: number,
@@ -40,7 +41,8 @@ export class Order {
     order_status: string,
     order_products: OrderProduct[],
     user?: User,
-    user_id?: number
+    user_id?: number,
+    products?: OrderProduct[],
   ) {
     this.id = id;
     this.merchant_id = merchant_id;
@@ -54,5 +56,6 @@ export class Order {
     this.user = user;
     this.order_products = order_products;
     this.user_id = user_id;
+    this.products = products;
   }
 }

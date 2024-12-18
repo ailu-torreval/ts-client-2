@@ -8,11 +8,12 @@ import { RootState } from "../store/store";
 import { Toast } from "native-base";
 import { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
+import { format } from "date-fns";
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user);
   const { theme } = useTheme();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
@@ -38,13 +39,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 
   useEffect(() => {
-    (async () => {
-      // if (Platform.OS !== 'web') {
-      //   const { status } = await Camera.requestCameraPermissionsAsync();
-      //   setHasPermission(status === 'granted');
-      // }
-    })();
-  }, []);
+    console.log("line 42",user.activeOrders)
+  }, [user]);
 
   function handleFabPress() {
     if (Platform.OS === 'web') {
@@ -66,10 +62,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 <CustomHeader screen="Home" />
 
   <View style={styles.wrapper}>
-        <Text style={styles.title}>Hi {user?.firstname}!</Text>
+        <Text style={styles.title}>Hi {user.user?.firstname}!</Text>
 
         <Card containerStyle={styles.card}>
-          <Icon name="qr-code-scanner" size={60} color="#F39200" />
+          <Icon name="qr-code-scanner" size={60} color={theme.colors.secondary} />
           <Text
             style={{
               color: theme.colors.black,
@@ -84,58 +80,53 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
         <Text style={styles.subtitle}>Active Orders</Text>
 
-        <Card containerStyle={styles.card}>
+{
+  user.activeOrders.length > 0 ? (
+    <>
+    {user.activeOrders.map((order, index) => (
+        <Card containerStyle={styles.card} key={index}>
           <Card.Title
-            style={{
+          style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}  
+          >
+            <Text style={{
               color: theme.colors.secondary,
               fontSize: 20,
               textAlign: "left",
-            }}
-          >
-            1.
+            }}>Table #{order.table_id}</Text>
+            <Text style={{
+              fontSize: 18,
+              textAlign: "right",
+            }}>Table #{order.table_id}</Text>
+          
           </Card.Title>
           <Card.Divider />
-          <Text style={styles.text}>order card example</Text>
+          {order.products?.map((item, index) => (
+            <Text key={index}>
+              1 x {item.name}
+            </Text>
+          ))}
+          <Text style={{fontWeight: 400}} >Total {order.total_amount} kr.</Text>
         </Card>
+    ))}
+    </>
+  ) : (
+    <>
         <Card containerStyle={styles.card}>
-          <Card.Title
+          <Icon name="no-food" size={30} color={theme.colors.primary} />
+          <Text
             style={{
               color: theme.colors.secondary,
               fontSize: 20,
-              textAlign: "left",
+              paddingTop:20,
+              textAlign: "center",
             }}
           >
-            2.
-          </Card.Title>
-          <Card.Divider />
-          <Text style={styles.text}>order card example</Text>
+          No Active Orders
+          </Text>
         </Card>
-        <Card containerStyle={styles.card}>
-          <Card.Title
-            style={{
-              color: theme.colors.secondary,
-              fontSize: 20,
-              textAlign: "left",
-            }}
-          >
-            3.
-          </Card.Title>
-          <Card.Divider />
-          <Text style={styles.text}> order card example</Text>
-        </Card>
-        <Card containerStyle={styles.card}>
-          <Card.Title
-            style={{
-              color: theme.colors.secondary,
-              fontSize: 20,
-              textAlign: "left",
-            }}
-          >
-            4.
-          </Card.Title>
-          <Card.Divider />
-          <Text style={styles.text}> order card example</Text>
-        </Card>
+    </>
+  )
+}
       </View>
         <FAB
           onPress={() => handleFabPress()}

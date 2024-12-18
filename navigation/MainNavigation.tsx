@@ -38,8 +38,7 @@ const MainNavigation: React.FC<MainNavigationProps> = ({
             iconName = "person";
           }
           return (
-            <Icon name={iconName || "home"} size={size + 8} color={color} />
-          );
+            <Icon name={iconName || "home"} size={size + 8} color={color} />          );
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: "gray",

@@ -53,6 +53,7 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
         );
         setTotal(total);
       } else {
+        // navigation.navigate("proccessing");
         handleOrder(order);
       }
     }

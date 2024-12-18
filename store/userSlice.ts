@@ -11,10 +11,12 @@ import { LoginUserDto } from "../entities/LoginUserDto";
 import { UserAPI } from "../api/userAPI";
 import { SignupUserDto } from "../entities/SignupUserDto";
 import { Platform } from "react-native";
+import { Order } from "../entities/Order";
   
   export interface UserState {
     user: User | null;
     token: string | null;
+    activeOrders: Order[];
     loading: boolean;
     error: string | null;
   }
@@ -22,6 +24,7 @@ import { Platform } from "react-native";
   const initialState: UserState = {
     user: null,
     token: null,
+    activeOrders: [],
     loading: false,
     error: null,
   };
@@ -97,7 +100,16 @@ import { Platform } from "react-native";
     reducers: {
       setToken: (state, action: PayloadAction<string>) => {
         state.token = action.payload;
-      }
+      },
+        addOrder: (state, action: PayloadAction<Order>) => {
+          console.log("order from slice", action.payload);
+        state.activeOrders.push(action.payload) 
+        if (state.user && state.user.orders) {
+          state.user.orders.push(action.payload);
+        } else if (state.user) {
+          state.user.orders = [action.payload];
+        }
+      },
     },
     extraReducers: (builder) => {
       builder
@@ -145,15 +157,13 @@ import { Platform } from "react-native";
         .addCase(logout.fulfilled, (state) => {
           state.token = '';
           state.user = null;
+          state.activeOrders = [];
         });
     },
   });
   
   export const { setToken } = userSlice.actions;
-  // export const selectUser = (state: RootState) => state.user.user;
-  // export const selectToken = (state: RootState) => state.user.token;
-  // export const selectLoading = (state: RootState) => state.user.loading;
-  // export const selectError = (state: RootState) => state.user.error;
+  export const { addOrder } = userSlice.actions;
   
   export default userSlice.reducer;
   

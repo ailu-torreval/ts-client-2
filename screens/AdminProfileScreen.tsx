@@ -8,7 +8,7 @@ import { logout } from "../store/userSlice";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 const AdminProfileScreen: React.FC = () => {
-    const { isLogged, setIsLogged, setIsGuest } = React.useContext(AuthContext);
+    const { isLogged, setIsLogged, setIsAdmin } = React.useContext(AuthContext);
     const user = useSelector((state: RootState) => state.user.user);
     const merchant = useSelector((state: RootState) => state.merchant.merchant);
     const [expanded, setExpanded] = useState<boolean>(false);
@@ -19,6 +19,7 @@ const AdminProfileScreen: React.FC = () => {
       console.log("logout");
       await dispatch(logout());
       setIsLogged(false);
+      setIsAdmin(false);
   }
     return (
         <View style={styles.container}>

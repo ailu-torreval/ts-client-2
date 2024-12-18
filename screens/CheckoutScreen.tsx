@@ -1,4 +1,4 @@
-import { Button, ListItem, useTheme } from "@rneui/themed";
+import { Button, Card, ListItem, useTheme } from "@rneui/themed";
 import { View, Text, TouchableHighlight, Platform } from "react-native";
 import { AuthContext } from "../store/AuthContext";
 import React, { useEffect, useState } from "react";
@@ -8,9 +8,21 @@ import { AppDispatch, RootState } from "../store/store";
 import { RootStackParamList } from "../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FormControl, Input, ScrollView, VStack, Icon, Toast } from "native-base";
+import {
+  FormControl,
+  Input,
+  ScrollView,
+  VStack,
+  Icon,
+  Toast,
+} from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
-import { createOrder, prepareOrder, setLoading, updateOrder } from "../store/orderSlice";
+import {
+  createOrder,
+  prepareOrder,
+  setLoading,
+  updateOrder,
+} from "../store/orderSlice";
 import { Order } from "../entities/Order";
 import { unwrapResult } from "@reduxjs/toolkit";
 
@@ -43,8 +55,7 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     if (order?.order_products) {
-      if(order.date === null) {
-
+      if (order.date === null) {
         console.log("order in basket", order);
         let total = 0;
         total = order.order_products.reduce(
@@ -78,11 +89,11 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   async function handlePayment() {
-    dispatch(setLoading(true)); 
+    dispatch(setLoading(true));
     const total_amount = total;
     console.log("Payment", cardDetails);
     await dispatch(prepareOrder());
-    
+
     const orderDetails: Partial<Order> = {
       id: null,
       contact_method: merchant?.merchant?.is_table_service ? 0 : 1,
@@ -94,10 +105,9 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
       user_id: isLogged ? user?.id : null,
     };
     await dispatch(updateOrder(orderDetails));
-
   }
 
-  async function handleOrder(order:Partial<Order>) {
+  async function handleOrder(order: Partial<Order>) {
     try {
       const resultAction = await dispatch(createOrder(order as Order));
       unwrapResult(resultAction);
@@ -113,7 +123,7 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={styles.headerWrap}>
+      <View style={styles.headerWrap}>
           <Text style={styles.headerText}>
             Service at {merchant?.merchant?.name}
           </Text>
@@ -137,6 +147,54 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
             </>
           )}
         </View>
+        <Card>
+          <Card.Title>Order Summary</Card.Title>
+          <View>
+            {order?.order_products?.map((product) => (
+              <View key={product.id}>
+                <View style={[styles.grid, styles.margin]}>
+                  <Text style={{ fontWeight: 600 }}>1 x {product.name}</Text>
+                  <Text>{product.price} kr.</Text>
+                </View>
+                {product.option && (
+                  <View
+                    style={[styles.grid, { marginLeft: 20 }]}
+                    key={product.option.id}
+                  >
+                    <Text>{product.option.name}</Text>
+                    {product.option.price > 0 && (
+                      <Text>+ {product.option.price} kr.</Text>
+                    )}
+                  </View>
+                )}
+                {product.extras && product.extras?.length > 0 && (
+                  <Text style={{ fontWeight: 500, marginTop: 10 }}>
+                    Extras:
+                  </Text>
+                )}
+                {product.extras?.map((extra) => (
+                  <View
+                    style={[styles.grid, { marginLeft: 20 }]}
+                    key={extra.id}
+                  >
+                    <Text>{extra.name}</Text>
+                    <Text>+ {extra.price} kr.</Text>
+                  </View>
+                ))}
+                {product.note && (
+                  <Text style={{ marginTop: 7 }}>
+                    <i>"{product.note}"</i>
+                  </Text>
+                )}
+              </View>
+            ))}
+            <View style={[styles.grid, styles.margin]}>
+              <Text style={{ fontWeight: 800 }}>Total</Text>
+              <Text style={{ fontWeight: 600 }}>{total} kr.</Text>
+            </View>
+          </View>
+        </Card>
+
         {!merchant.merchant?.is_table_service && (
           <View>
             <Text style={styles.headerText}>
@@ -254,9 +312,10 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
           height: 65,
         }}
         loading={orderState}
-              loadingProps={{
-                size: 'small',
-                color: 'white',}}
+        loadingProps={{
+          size: "small",
+          color: "white",
+        }}
         size="lg"
         disabled={!isFormValid}
         style={styles.btn}
@@ -329,5 +388,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#666",
     marginBottom: 10,
+  },
+  grid: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    textTransform: "capitalize",
+  },
+  margin: {
+    marginTop: 17,
   },
 });

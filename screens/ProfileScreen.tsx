@@ -27,6 +27,7 @@ const ProfileScreen: React.FC = () => {
     console.log("logout");
     await dispatch(logout());
     setIsLogged(false);
+    setIsGuest(false);
 }
 
 async function handleLogin() {

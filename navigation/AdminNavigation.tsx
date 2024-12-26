@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon, useTheme } from "@rneui/themed";
 import React from "react";
-import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import AdminProfileScreen from "../screens/AdminProfileScreen";
 import AdminHomeScreen from "../screens/AdminHomescreen";
 

@@ -38,7 +38,11 @@ const AdminProfileScreen: React.FC = () => {
             </Text>
         </View>
         <View style={styles.footer}>
-                <ListItem onPress={handleLogout}>
+                <ListItem style={{
+                  flex: 1,
+                  width: "100%",
+                }}
+                 onPress={handleLogout}>
                   <Icon
                     name="logout"
                     type="material-community"
@@ -46,8 +50,7 @@ const AdminProfileScreen: React.FC = () => {
                     color={theme.colors.primary}
                   />
                   <ListItem.Content>
-                    <ListItem.Title>Logout</ListItem.Title>
-                  </ListItem.Content>
+                  <ListItem.Title style={{fontSize: 20}}>Logout</ListItem.Title>                  </ListItem.Content>
                   <ListItem.Chevron />
                 </ListItem>
               </View>
@@ -85,6 +88,7 @@ const styles = StyleSheet.create({
       bottom: 0,
       left: 0,
       right: 0,
+      width: "100%",
       flexDirection: "row",
       alignItems: "center",
       zIndex: 1, // Ensure the header is above other content

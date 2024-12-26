@@ -28,12 +28,12 @@ const ProfileScreen: React.FC = () => {
     await dispatch(logout());
     setIsLogged(false);
     setIsGuest(false);
-}
+  }
 
-async function handleLogin() {
+  async function handleLogin() {
     setIsGuest(false);
     await dispatch(logout());
-    }
+  }
 
   return (
     <>
@@ -77,52 +77,61 @@ async function handleLogin() {
                   {/* {user && user.invoices.map((invoice, i) => ( */}
                   <ScrollView style={styles.scrollView}>
                     {user &&
-                      user.orders.slice().reverse().map((order, i) => (
-                        <ListItem key={i}>
-                          <ListItem.Content>
-                            <ListItem.Title>
-                              {order.date
-                                ? format(new Date(order.date), "dd/MM HH:mm")
-                                : "N/A"}
-                            </ListItem.Title>
-                            <ListItem.Subtitle
-                              style={{
-                                color: theme.colors.primary,
-                                fontWeight: "bold",
-                              }}
-                            >
-                              # {order.id}
-                            </ListItem.Subtitle>
-                          </ListItem.Content>
-                          <ListItem.Content right>
-                            <ListItem.Title
-                              right
-                              style={{ color: theme.colors.primary }}
-                            >
-                              {order?.total_amount} kr.
-                            </ListItem.Title>
-                          </ListItem.Content>
-                        </ListItem>
-                      ))}
+                      user.orders
+                        .slice()
+                        .reverse()
+                        .map((order, i) => (
+                          <ListItem key={i}>
+                            <ListItem.Content>
+                              <ListItem.Title>
+                                {order.date
+                                  ? format(new Date(order.date), "dd/MM HH:mm")
+                                  : "N/A"}
+                              </ListItem.Title>
+                              <ListItem.Subtitle
+                                style={{
+                                  color: theme.colors.primary,
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                # {order.id}
+                              </ListItem.Subtitle>
+                            </ListItem.Content>
+                            <ListItem.Content right>
+                              <ListItem.Title
+                                right
+                                style={{ color: theme.colors.primary }}
+                              >
+                                {order?.total_amount} kr.
+                              </ListItem.Title>
+                            </ListItem.Content>
+                          </ListItem>
+                        ))}
                   </ScrollView>
                 </ListItem.Accordion>
               )}
-
             </View>
-              <View style={styles.footer}>
-                <ListItem onPress={handleLogout}>
-                  <Icon
-                    name="logout"
-                    type="material-community"
-                    size={25}
-                    color={theme.colors.primary}
-                  />
-                  <ListItem.Content>
-                    <ListItem.Title>Logout</ListItem.Title>
-                  </ListItem.Content>
-                  <ListItem.Chevron />
-                </ListItem>
-              </View>
+
+            <View style={styles.footer}>
+              <ListItem
+                style={{
+                  flex: 1,
+                  width: "100%",
+                }}
+                onPress={handleLogout}
+              >
+                <Icon
+                  name="logout"
+                  type="material-community"
+                  size={25}
+                  color={theme.colors.primary}
+                />
+                <ListItem.Content>
+                  <ListItem.Title style={{fontSize: 20}}>Logout</ListItem.Title>
+                </ListItem.Content>
+                <ListItem.Chevron />
+              </ListItem>
+            </View>
           </View>
         </>
       ) : (
@@ -165,6 +174,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: "row",
+    width: "100%",
     alignItems: "center",
     zIndex: 1, // Ensure the header is above other content
   },

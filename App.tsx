@@ -114,6 +114,7 @@ function AppContent() {
   useEffect(() => {
     const urlParams = queryString.parse(window.location.search);
     if (urlParams.merchantId && urlParams.tableId) {
+      // reading table qr code flow
       console.log(urlParams);
       setIsGuest(true);
       setMerchantId(urlParams.merchantId);

@@ -12,7 +12,7 @@ import { io } from "socket.io-client";
 import { RingLoader, RiseLoader } from "react-spinners";
 import { resetOrder, updateOrder } from "../store/orderSlice";
 
-// const socket = io('https://ts-server-production-1986.up.railway.app');
+// const socket = io("http://localhost:3000", {
 const socket = io("https://ts-server-production-1986.up.railway.app", {
   withCredentials: true,
   transports: ["websocket", "polling"],
@@ -43,8 +43,10 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
     socket.on('orderChanged', (data) => {
       console.log('Received orderChanged event', data);
       if (data.orderId == order?.id) {
-        console.log('Order changed:', data);
+        console.log('Order changed:', data[status]);
+        console.log('Order changed inside:', data[1]);
         setStatus(data.status);
+
         dispatch(updateOrder({order_status: data.status}));
         // Handle the order accepted event (e.g., update UI)
       }

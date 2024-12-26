@@ -56,6 +56,22 @@ export const fetchMerchantByAdmin = createAsyncThunk(
   }
 );
 
+export const fetchOrder = createAsyncThunk(
+  "incoming-order",
+  async (id: number, thunkAPI) => {
+    try {
+      console.log("fetch order from thunk")
+      const response = MerchantAPI.fetchOrder(id);
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return thunkAPI.rejectWithValue(error.message);
+      }
+      return thunkAPI.rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
 export const fetchProduct = createAsyncThunk(
   "product",
   async (id: number, thunkAPI) => {
@@ -140,6 +156,22 @@ const merchantSlice = createSlice({
         state.selectedProduct = action.payload;
       })
       .addCase(fetchProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        console.log("state", state);
+      })
+      .addCase(fetchOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.merchant?.orders?.findIndex((order) => order.id === action.payload.id);
+        if(index && index === -1 && state.merchant?.orders) {
+          state.merchant.orders.push(action.payload);
+        }
+      })
+      .addCase(fetchOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
         console.log("state", state);

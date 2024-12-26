@@ -42,6 +42,17 @@ export class MerchantAPI extends SuperQueries {
     }
   }
 
+  static async fetchOrder(id:number) {
+    try {
+      console.log("fetch order api")
+      const response = await axios.get(super.baseUrl + "order/" + id);
+      return response.data;
+    } catch (error) {
+      console.log("error fetching order", error);
+      throw error;
+    }
+  }
+
 
   static async changeOrderStatus(id:number, status:string) {
     try {

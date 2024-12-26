@@ -4,11 +4,19 @@ import { AppDispatch, RootState } from "../store/store";
 import { Button, Card, useTheme } from "@rneui/themed";
 import CustomHeader from "../components/CustomHeader";
 import { useEffect } from "react";
-import { changeOrderStatus, fetchMerchantByAdmin } from "../store/merchantSlice";
+import { changeOrderStatus, fetchMerchantByAdmin, fetchOrder } from "../store/merchantSlice";
 import React from "react";
 import { Order } from "../entities/Order";
 import { format } from "date-fns";
 import { ScrollView } from "native-base";
+import { io } from "socket.io-client";
+
+// const socket = io("http://localhost:3000", {
+const socket = io("https://ts-server-production-1986.up.railway.app", {
+  withCredentials: true,
+  transports: ["websocket", "polling"],
+});
+
 
 const AdminHs: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -16,6 +24,37 @@ const AdminHs: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { theme } = useTheme();
   const [pendingOrders, setPendingOrders] = React.useState<Order[]>([]);
+
+  useEffect(() => {
+    if (merchant?.id) {
+      socket.emit('joinMerchantRoom', merchant.id);
+    }
+
+    socket.on('connect', () => {
+      console.log('Connected to the merchant server');
+    });
+
+    socket.on('orderCreated', (data) => {
+      console.log('Received orderCreated event', data);
+      dispatch(fetchOrder(data.orderId));
+      // if (data.orderId == order?.id) {
+      //   console.log('Order changed:', data);
+      //   setStatus(data.status);
+      //   dispatch(updateOrder({order_status: data.status}));
+      //   // Handle the order accepted event (e.g., update UI)
+      // }
+    });
+
+    // socket.on('disconnect', () => {
+    //   console.log('Disconnected from the server');
+    // });
+
+    // return () => {
+    //   socket.off('connect');
+    //   socket.off('orderChanged');
+    //   socket.off('disconnect');
+    // };
+  }, [merchant]);
 
   useEffect(() => {
     if (user && user.token) {
@@ -41,7 +80,7 @@ const AdminHs: React.FC = () => {
           {merchant && (
             <View>
               <Text style={styles.subtitle}>Pending Orders</Text>
-              {merchant.orders?.map((order) => {
+              {merchant.orders?.slice().reverse().map((order) => {
                 if (order.order_status === "pending") {
                   return (
                     <Card key={order.id}>

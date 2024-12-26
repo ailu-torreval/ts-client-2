@@ -13,7 +13,7 @@ import { RingLoader, RiseLoader } from "react-spinners";
 import { resetOrder, updateOrder } from "../store/orderSlice";
 
 // const socket = io('https://ts-server-production-1986.up.railway.app');
-const socket = io("http://localhost:3000", {
+const socket = io("https://ts-server-production-1986.up.railway.app", {
   withCredentials: true,
   transports: ["websocket", "polling"],
 });

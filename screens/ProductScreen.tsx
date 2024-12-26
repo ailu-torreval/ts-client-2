@@ -111,7 +111,7 @@ const ProductScreen: React.FC<Props> = ({ navigation, route }) => {
 
       dispatch(addOrderProduct(orderProduct));
     }
-    navigation.goBack();  
+    navigation.navigate('merchant');  
   }
 
   return (

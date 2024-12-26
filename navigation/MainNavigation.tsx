@@ -12,6 +12,8 @@ import BasketScreen from "../screens/BasketScreen";
 import ProccessingScreen from "../screens/ProccessingScreen";
 import LandingScreen from "../screens/LandingScreen";
 import { NavigationProp } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 const Tab = createBottomTabNavigator();
 
@@ -70,20 +72,13 @@ const HomeStack = createNativeStackNavigator<RootStackParamList>();
 type HomeStackNavigatorProps = {
   merchantId?: string;
   tableId?: string;
-  navigation: NavigationProp<RootStackParamList>;
+  // navigation: NavigationProp<RootStackParamList>;
 };
 
 const HomeStackNavigator: React.FC<HomeStackNavigatorProps> = ({
   merchantId,
   tableId,
-  navigation,
 }) => {
-  useEffect(() => {
-    if (merchantId && tableId) {
-      // Navigate to LandingScreen with the provided data
-      navigation.navigate("landing", { merchantId, tableId });
-    }
-  }, [merchantId, tableId]);
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen

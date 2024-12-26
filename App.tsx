@@ -22,6 +22,7 @@ import * as SecureStore from "expo-secure-store";
 import { NativeBaseProvider } from "native-base";
 import queryString from "query-string";
 import AdminNavigation from "./navigation/AdminNavigation";
+import { updateOrder } from "./store/orderSlice";
 
 const theme = createTheme({
   lightColors: {
@@ -116,7 +117,12 @@ function AppContent() {
     if (urlParams.merchantId && urlParams.tableId) {
       // reading table qr code flow
       console.log(urlParams);
+      if (user) {
+        setIsLogged(true);
+      } else {
       setIsGuest(true);
+      }
+      dispatch(updateOrder({ table_id: Number(urlParams.tableId), merchant_id: Number(urlParams.merchantId) }));
       setMerchantId(urlParams.merchantId);
       setTableId(urlParams.tableId);
     }

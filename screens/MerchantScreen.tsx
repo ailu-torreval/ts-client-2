@@ -12,11 +12,15 @@ import { AuthContext } from "../store/AuthContext";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { StyleSheet } from "react-native";
 import { MenuCat } from "../entities/MenuCat";
-
+import { Product } from "../entities/Product";
+import { useNavigation } from "@react-navigation/native";
 
 // type Props = {
 //     navigation: any;
@@ -44,7 +48,7 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     if (order?.order_products) {
       calculateTotal();
-      console.log("order updated from emrchant page")
+      console.log("order updated from emrchant page");
     }
   }, [order]);
 
@@ -122,49 +126,16 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.categoryTitle}>{category.name}</Text>
             {category.products.map((product) => {
               const randomNumber = Math.floor(Math.random() * 7) + 1;
-              const isInOrder = order?.order_products?.some(
-                (orderProduct) => orderProduct.product_id === product.id
-              );
+              const isInOrder =
+                order?.order_products?.some(
+                  (orderProduct) => orderProduct.product_id === product.id
+                ) ?? false;
               return (
-                <TouchableOpacity
+                <ProductCard
                   key={product.id}
-                  onPress={() =>
-                    navigation.navigate("product", {
-                      id: product.id,
-                      imgId: randomNumber,
-                    })
-                  }
-                >
-                  <View style={[
-                styles.cardContent,
-                isInOrder && styles.selected,
-              ]}>
-                    <Image
-                      source={{uri:"https://ailu-torreval.github.io/imgs/assets/4.png"}}
-                      style={styles.productImage}
-                    />
-                    <View style={styles.productDetails}>
-                      <Text style={styles.productName}>{product.name}</Text>
-                      <Text style={styles.productDesc}>{product?.desc}</Text>
-                      {product.is_offer ? (
-                        <View style={styles.priceContainer}>
-                          <Text
-                            style={[styles.productPrice, styles.strikethrough]}
-                          >
-                            {product.price}kr.
-                          </Text>
-                          <Text style={styles.offerPrice}>
-                            {product.offer_price}kr.
-                          </Text>
-                        </View>
-                      ) : (
-                        <Text style={styles.productPrice}>
-                          {product.price}kr.
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                </TouchableOpacity>
+                  product={product}
+                  isInOrder={isInOrder}
+                />
               );
             })}
           </View>
@@ -172,19 +143,64 @@ const MerchantScreen: React.FC<Props> = ({ navigation }) => {
       </ScrollView>
       {order?.order_products && order.order_products.length > 0 && (
         <Button
-        buttonStyle={{
-          height: 65,
-        }}
-        size="lg"
-        style={styles.btn}
+          buttonStyle={{
+            height: 65,
+          }}
+          size="lg"
+          style={styles.btn}
           onPress={() => navigation.navigate("basket")}
         >
-          <Text style={{  color: "white", fontSize:22  }}>
+          <Text style={{ color: "white", fontSize: 22 }}>
             View Basket - {total}kr.
           </Text>
         </Button>
       )}
     </SafeAreaView>
+  );
+};
+
+
+
+type ProductCardProps = {
+  product: Product;
+  isInOrder: boolean;
+};
+
+const ProductCard: React.FC<ProductCardProps> = ({ product, isInOrder }) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  return (
+    <TouchableOpacity
+      key={product.id}
+      onPress={() =>
+        navigation.navigate("product", {
+          id: product.id,
+          imgId: 4,
+        })
+      }
+    >
+      <View style={[styles.cardContent, isInOrder && styles.selected]}>
+        <Image
+          source={{ uri: "https://ailu-torreval.github.io/imgs/assets/4.png" }}
+          style={styles.productImage}
+        />
+        <View style={styles.productDetails}>
+          <Text style={styles.productName}>{product.name}</Text>
+          <Text style={styles.productDesc}>{product?.desc}</Text>
+          {product.is_offer ? (
+            <View style={styles.priceContainer}>
+              <Text style={[styles.productPrice, styles.strikethrough]}>
+                {product.price}kr.
+              </Text>
+              <Text style={styles.offerPrice}>{product.offer_price}kr.</Text>
+            </View>
+          ) : (
+            <Text style={styles.productPrice}>{product.price}kr.</Text>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 

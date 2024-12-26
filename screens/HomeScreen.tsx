@@ -17,6 +17,22 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { theme } = useTheme();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
+  const order = useSelector((state: RootState) => state.order.order);
+  
+  useEffect(() => {
+    console.log("home navigation", order);
+    if (order?.merchant_id && order?.table_id) {
+      const state = navigation.getState();
+      const currentRoute = state.routes[state.index];
+      if (currentRoute?.name === "homescreen") {
+        console.log("Navigating to landing screen");
+        // Navigate to LandingScreen with the provided data
+        const merchantId = order?.merchant_id.toString();
+        const tableId = order?.table_id.toString();
+        navigation.navigate("landing", { merchantId, tableId });
+      }
+    }
+  }, [order]);
   
 
   useEffect(() => {

@@ -20,6 +20,7 @@ const LandingScreen: React.FC<Props> = ({ navigation, route }) => {
   const merchant = useSelector((state: RootState) => state.merchant.merchant);
   const { isLogged, setIsLogged, isGuest, setIsGuest } = React.useContext(AuthContext);
   const order = useSelector((state: RootState) => state.order.order);
+  const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const { theme } = useTheme();
 
@@ -51,8 +52,15 @@ const LandingScreen: React.FC<Props> = ({ navigation, route }) => {
           merchant_id: Number(merchantId),
         })
       );
+      navigation.setParams({ merchantId: undefined, tableId: undefined });
     }
   }, []);
+  useEffect(() => {
+    if(user && user.token){
+      setIsLogged(true);
+      setIsGuest(false);
+    }
+  }, [user]);
 
   function handleContinueBtn() {
   navigation.navigate("merchant");
@@ -75,7 +83,7 @@ const LandingScreen: React.FC<Props> = ({ navigation, route }) => {
           <Text style={styles.title}>Place your order for</Text>
         </View>
         <View>
-          <Text style={styles.number}>{tableId}</Text>
+          <Text style={styles.number}>{tableId || order?.table_id}</Text>
           <Text style={styles.text}>Table</Text>
         <Text style={styles.name}>{merchant?.name}</Text>
         </View>

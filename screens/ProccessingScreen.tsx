@@ -69,6 +69,8 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
   async function handleFinishOrder() {
     await dispatch(resetOrder());
     navigation.navigate("homescreen");
+    const newUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
   }
 
   return (

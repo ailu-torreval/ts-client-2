@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { Card, FAB, Icon, useTheme } from "@rneui/themed";
-import { Platform, SafeAreaView, Text, View } from "react-native";
+import { Platform, Pressable, SafeAreaView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -113,26 +113,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           alert("Invalid QR code data");
         }
       } catch (error) {
-        alert("Error parsing QR code data");
+        alert("Error reading QR code data");
       }
     }
   }
 
-  // async function handleFabPress() {
-  //   if (Platform.OS === 'web') {
-  //     const merchantId = '1';
-  //     const tableId = '1';
-  //     navigation.navigate("landing",{ merchantId, tableId });
-  //     // Toast.show({
-  //     //   description: 'Camera access is not available on web.',
-  //     // });
-  //   } else {
-  //     // Open the camera
-  //     setCameraVisible(true);
-  //     console.log('Open camera');
-
-  //   }
-  //   }
+  async function handleFakePress() {
+      const merchantId = '1';
+      const tableId = '1';
+      navigation.navigate("landing",{ merchantId, tableId });
+    }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -142,11 +132,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.title}>Hi {user.user?.firstname}!</Text>
 
         <Card containerStyle={styles.card}>
+          <Pressable onPress={() => handleFakePress()}>
           <Icon
             name="qr-code-scanner"
             size={60}
             color={theme.colors.secondary}
           />
+          </Pressable>
           <Text
             style={{
               color: theme.colors.black,
@@ -226,7 +218,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               delay={300}
               onError={(err) => console.error(err)}
               onScan={handleQrReaderScanned}
-              style={{height: 300, width: "100%"}}
+              style={{height: 300, width: 300}}
               facingMode="environment"
             />
           ) : (

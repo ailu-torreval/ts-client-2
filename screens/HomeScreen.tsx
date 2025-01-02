@@ -10,7 +10,8 @@ import React, { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
 import { Camera, CameraView } from "expo-camera";
 import QrScanner from "react-qr-scanner";
-import { RNCamera } from 'react-native-camera';
+import * as Notifications from 'expo-notifications';
+import { messaging } from '../firebaseConfig';
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -41,6 +42,33 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     getCameraPermissions();
   }, []);
 
+  useEffect(() => {
+    const requestPermission = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permission for notifications was denied');
+        return;
+      }
+
+      const token = await messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' });
+      console.log('FCM Token:', token);
+      // Store the token in your database
+    };
+
+    requestPermission();
+
+    messaging.onMessage((payload:any) => {
+      console.log('Message received. ', payload);
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: payload.notification.title,
+          body: payload.notification.body,
+        },
+        trigger: null,
+      });
+    });
+  }, []);
+  
   useEffect(() => {
     console.log("home navigation", order);
     if (order?.merchant_id && order?.table_id) {

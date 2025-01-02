@@ -8,7 +8,6 @@ import { RootState } from "../store/store";
 import { Toast } from "native-base";
 import { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import { Camera, CameraView } from "expo-camera";
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;

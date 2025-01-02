@@ -96,20 +96,25 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }
   }
 
-  function handleQrReaderScanned(data: string | null) {
+  function handleQrReaderScanned(data: any) {
     if (data) {
+      console.log(data);
       setScanned(true);
       setCameraVisible(false);
-      alert(`QR code data: ${data}`);
-
-      const url = new URL(data);
-      const merchantId = url.searchParams.get("merchantId");
-      const tableId = url.searchParams.get("tableId");
-
-      if (merchantId && tableId) {
-        navigation.navigate("landing", { merchantId, tableId });
-      } else {
-        alert("Invalid QR code data");
+      alert(`QR code data: ${data.text}`);
+  
+      try {
+        const url = new URL(data.text);
+        const merchantId = url.searchParams.get("merchantId");
+        const tableId = url.searchParams.get("tableId");
+  
+        if (merchantId && tableId) {
+          navigation.navigate("landing", { merchantId, tableId });
+        } else {
+          alert("Invalid QR code data");
+        }
+      } catch (error) {
+        alert("Error parsing QR code data");
       }
     }
   }
@@ -223,6 +228,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               onError={(err) => console.error(err)}
               onScan={handleQrReaderScanned}
               style={StyleSheet.absoluteFillObject}
+              facingMode="environment"
             />
           ) : (
             <CameraView

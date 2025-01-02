@@ -227,8 +227,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               delay={300}
               onError={(err) => console.error(err)}
               onScan={handleQrReaderScanned}
-              style={StyleSheet.absoluteFillObject}
-              facingMode="environment"
+              style={{height: 300, width: "100%"}}
+              facingMode="user"
             />
           ) : (
             <CameraView
@@ -264,6 +264,10 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 20,
   },
+  previewStyle:{
+    height: 240,
+    width: 320,
+  }, 
   card: {
     backgroundColor: "white",
   },

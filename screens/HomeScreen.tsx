@@ -22,8 +22,18 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      if (Platform.OS === 'web') {
+        try {
+          await navigator.mediaDevices.getUserMedia({ video: true });
+          setHasPermission(true);
+        } catch (error) {
+          setHasPermission(false);
+        }
+      } else {
+        // Handle native permissions
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(status === "granted");
+      }
     };
 
     getCameraPermissions();

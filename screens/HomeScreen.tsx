@@ -100,9 +100,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     if (data) {
       console.log(data);
       setScanned(true);
-      setCameraVisible(false);
-      alert(`QR code data: ${data.text}`);
-  
+      setCameraVisible(false);  
       try {
         const url = new URL(data.text);
         const merchantId = url.searchParams.get("merchantId");

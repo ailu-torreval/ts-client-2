@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
 import { Camera, CameraView } from "expo-camera";
 import QrScanner from "react-qr-scanner";
+import { RNCamera } from 'react-native-camera';
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -226,7 +227,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               onError={(err) => console.error(err)}
               onScan={handleQrReaderScanned}
               style={{height: 300, width: "100%"}}
-              facingMode="environment"
+              // facingMode="environment"
+              facingMode={RNCamera.Constants.Type.back}
             />
           ) : (
             <CameraView

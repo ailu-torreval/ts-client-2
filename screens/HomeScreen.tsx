@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
 import { Card, FAB, Icon, useTheme } from "@rneui/themed";
-import { Platform, Pressable, SafeAreaView, Text, View } from "react-native";
+import { Alert, Platform, Pressable, SafeAreaView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -52,6 +52,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
       const token = await messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY' });
       console.log('FCM Token:', token);
+      Alert.alert('FCM Token:', token);
       // Store the token in your database
     };
 
@@ -68,7 +69,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       });
     });
   }, []);
-  
+
   useEffect(() => {
     console.log("home navigation", order);
     if (order?.merchant_id && order?.table_id) {

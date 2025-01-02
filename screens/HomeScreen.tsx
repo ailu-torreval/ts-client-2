@@ -6,9 +6,10 @@ import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { Toast } from "native-base";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
 import { Camera, CameraView } from "expo-camera";
+import QrScanner from "react-qr-scanner";
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -92,6 +93,24 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       navigation.navigate("landing", { merchantId, tableId });
     } else {
       alert("Invalid QR code data");
+    }
+  }
+
+  function handleQrReaderScanned(data: string | null) {
+    if (data) {
+      setScanned(true);
+      setCameraVisible(false);
+      alert(`QR code data: ${data}`);
+
+      const url = new URL(data);
+      const merchantId = url.searchParams.get("merchantId");
+      const tableId = url.searchParams.get("tableId");
+
+      if (merchantId && tableId) {
+        navigation.navigate("landing", { merchantId, tableId });
+      } else {
+        alert("Invalid QR code data");
+      }
     }
   }
 
@@ -197,14 +216,23 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         )}
       </View>
       <View style={styles.scannerContainer}>
-        {cameraVisible && (
-          <CameraView
+                {cameraVisible && (
+          Platform.OS === 'web' ? (
+            <QrScanner
+              delay={300}
+              onError={(err) => console.error(err)}
+              onScan={handleQrReaderScanned}
+              style={StyleSheet.absoluteFillObject}
+            />
+          ) : (
+            <CameraView
             onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
             barcodeScannerSettings={{
               barcodeTypes: ["qr", "pdf417"],
             }}
             style={StyleSheet.absoluteFillObject}
           />
+          )
         )}
       </View>
       <FAB

@@ -227,8 +227,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               onError={(err) => console.error(err)}
               onScan={handleQrReaderScanned}
               style={{height: 300, width: "100%"}}
-              // facingMode="environment"
-              facingMode={"environment"}
+              facingMode="environment"
             />
           ) : (
             <CameraView

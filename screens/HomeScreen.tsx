@@ -137,7 +137,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader title="Tble Service App" />
+      <CustomHeader title="Table Service App" />
 
       <View style={styles.wrapper}>
         <Text style={styles.title}>Hi {user.user?.firstname}!</Text>
@@ -228,7 +228,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               onError={(err) => console.error(err)}
               onScan={handleQrReaderScanned}
               style={{height: 300, width: "100%"}}
-              facingMode="user"
+              facingMode="environment"
             />
           ) : (
             <CameraView

@@ -11,7 +11,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import { Button } from "@rneui/themed";
 
-const logo = require("../assets/logo.png");
+const logo = require("../assets/logo-yellow.png");
 
 type Props = NativeStackScreenProps<RootStackParamList, "main">;
 

@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../App";
-import { Card, FAB, Header, Icon, useTheme } from "@rneui/themed";
+import { Card, FAB, Icon, useTheme } from "@rneui/themed";
 import { Platform, SafeAreaView, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -8,7 +8,8 @@ import { RootState } from "../store/store";
 import { Toast } from "native-base";
 import { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
-import { format } from "date-fns";
+import { BarCodeScanner } from "expo-barcode-scanner";
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -17,7 +18,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { theme } = useTheme();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
+  const [scanned, setScanned] = useState(false);
   const order = useSelector((state: RootState) => state.order.order);
+
+  useEffect(() => {
+    const getBarCodeScannerPermissions = async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
+
+    getBarCodeScannerPermissions();
+  }, []);
   
   useEffect(() => {
     console.log("home navigation", order);
@@ -47,7 +58,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     return () => {
       if (parent) { 
         parent.setOptions({
-          tabBarStyle: { display: 'flex',height: 70      },
+          tabBarStyle: { display: 'flex',height: 70 },
         });
       }
     };
@@ -58,20 +69,31 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     console.log("line 42",user.activeOrders)
   }, [user]);
 
-  function handleFabPress() {
-    if (Platform.OS === 'web') {
-      const merchantId = '1';
-      const tableId = '1';
-      navigation.navigate("landing",{ merchantId, tableId });
-      // Toast.show({
-      //   description: 'Camera access is not available on web.',
-      // });
-    } else {
-      // Open the camera
-      setCameraVisible(true);
-      console.log('Open camera');
+  async function handleFabPress() {
+    setScanned(false);
+  };
 
-    }  }
+  function handleBarCodeScanned(type:any, data:any ) {
+    setScanned(true);
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    // You can navigate to another screen or process the scanned data here
+  };
+
+  // async function handleFabPress() {
+  //   if (Platform.OS === 'web') {
+  //     const merchantId = '1';
+  //     const tableId = '1';
+  //     navigation.navigate("landing",{ merchantId, tableId });
+  //     // Toast.show({
+  //     //   description: 'Camera access is not available on web.',
+  //     // });
+  //   } else {
+  //     // Open the camera
+  //     setCameraVisible(true);
+  //     console.log('Open camera');
+
+  //   }
+  //   }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -144,6 +166,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   )
 }
       </View>
+      <View style={styles.scannerContainer}>
+        {!scanned && (
+          <BarCodeScanner
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            style={StyleSheet.absoluteFillObject}
+          />
+        )}
+      </View>
         <FAB
           onPress={() => handleFabPress()}
           title="Scan"
@@ -178,6 +208,11 @@ const styles = StyleSheet.create({
   title: { color: "#45A47D", fontWeight: "bold", fontSize: 30, paddingTop: 30, textTransform: 'capitalize' }, 
   header: {
     backgroundColor: "#fff",
+  },
+  scannerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

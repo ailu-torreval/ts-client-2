@@ -101,11 +101,9 @@ const orderSlice = createSlice({
             JSON.stringify(product.extras) === JSON.stringify(action.payload.extras) &&
             JSON.stringify(product.option) === JSON.stringify(action.payload.option)
         );
-        console.log("index", index);
         if (index !== -1) {
           state.order.order_products.splice(index, 1);
         }
-        console.log("from remove prod slice", state.order.order_products);
       }
     },
     clearOrder: (state) => {
@@ -125,7 +123,6 @@ const orderSlice = createSlice({
           delete orderProd.option;
           delete orderProd.extras;
         });
-        console.log(state.order);
       }
     },
     setLoading: (state, action: PayloadAction<boolean>) => {

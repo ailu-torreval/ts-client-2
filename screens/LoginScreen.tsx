@@ -19,7 +19,7 @@ import * as SecureStore from "expo-secure-store";
 import React from "react";
 import { FormControl, Icon, Input, VStack } from "native-base";
 
-const logo = require("../assets/logo.png");
+const logo = require("../assets/logo-yellow.png");
 
 const LoginScreen: React.FC = () => {
   const theme = useTheme();

@@ -23,7 +23,8 @@ import { signup } from "../store/userSlice";
 // } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button } from "@rneui/themed";
-const logo = require("../assets/logo.png");
+import { FormControl, Icon, Input, WarningOutlineIcon } from "native-base";
+const logo = require("../assets/logo-yellow.png");
 
 const SignupScreen: React.FC = () => {
   const { setIsLogged, setIsAdmin } = React.useContext(AuthContext);
@@ -116,7 +117,7 @@ const SignupScreen: React.FC = () => {
           }}
           resizeMode="contain"
         />
-        {/* <FormControl
+        <FormControl
           isInvalid={
             newUser.firstname.length > 0 && newUser.firstname.length < 3
           }
@@ -288,7 +289,7 @@ const SignupScreen: React.FC = () => {
               </FormControl.ErrorMessage>
             )}
           </View>
-        </FormControl> */}
+        </FormControl>
       </ScrollView>
       <View style={styles.footer}>
       <Button

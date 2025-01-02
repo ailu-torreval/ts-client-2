@@ -2,7 +2,7 @@ import { Header, useTheme, Icon, Text } from '@rneui/themed';
 import React from 'react';
 import { Image } from "react-native";
 
-const logo = require("../assets/logo-white.png");
+const logo = require("../assets/logo-yellow.png");
 
 type Props = {
     title: string

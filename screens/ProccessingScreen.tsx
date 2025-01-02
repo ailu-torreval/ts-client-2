@@ -43,12 +43,9 @@ const ProccessingScreen: React.FC<Props> = ({ navigation, route }) => {
     socket.on('orderChanged', (data) => {
       console.log('Received orderChanged event', data);
       if (data.orderId == order?.id) {
-        console.log('Order changed:', data[status]);
-        console.log('Order changed inside:', data[1]);
         setStatus(data.status);
 
         dispatch(updateOrder({order_status: data.status}));
-        // Handle the order accepted event (e.g., update UI)
       }
     });
 

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Merchant } from "../entities/Merchant";
 import { MerchantAPI } from "../api/merchantAPI";
 import { Product } from "../entities/Product";
+import { Audio } from 'expo-av';
 
 interface ChangeOrderStatusArgs {
   order_id: number;
@@ -61,7 +62,11 @@ export const fetchOrder = createAsyncThunk(
   async (id: number, thunkAPI) => {
     try {
       console.log("fetch order from thunk")
-      const response = MerchantAPI.fetchOrder(id);
+      const response = await MerchantAPI.fetchOrder(id);
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/ringbell.mp3')
+      );
+      await sound.playAsync();
       return response;
     } catch (error) {
       if (error instanceof Error) {

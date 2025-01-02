@@ -91,9 +91,7 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
   async function handlePayment() {
     dispatch(setLoading(true));
     const total_amount = total;
-    console.log("Payment", cardDetails);
     await dispatch(prepareOrder());
-
     const orderDetails: Partial<Order> = {
       id: null,
       contact_method: merchant?.merchant?.is_table_service ? 0 : 1,
@@ -106,7 +104,6 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
     };
     await dispatch(updateOrder(orderDetails));
   }
-
   async function handleOrder(order: Partial<Order>) {
     try {
       const resultAction = await dispatch(createOrder(order as Order));
@@ -116,7 +113,6 @@ const CheckoutScreen: React.FC<Props> = ({ navigation }) => {
       Toast.show({
         description: "Something went wrong, please try again.",
       });
-      console.log("error posting order", error);
     }
   }
 

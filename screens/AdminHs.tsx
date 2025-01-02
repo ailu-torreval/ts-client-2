@@ -29,31 +29,13 @@ const AdminHs: React.FC = () => {
     if (merchant?.id) {
       socket.emit('joinMerchantRoom', merchant.id);
     }
-
     socket.on('connect', () => {
       console.log('Connected to the merchant server');
     });
-
     socket.on('orderCreated', (data) => {
       console.log('Received orderCreated event', data);
       dispatch(fetchOrder(data.orderId));
-      // if (data.orderId == order?.id) {
-      //   console.log('Order changed:', data);
-      //   setStatus(data.status);
-      //   dispatch(updateOrder({order_status: data.status}));
-      //   // Handle the order accepted event (e.g., update UI)
-      // }
     });
-
-    // socket.on('disconnect', () => {
-    //   console.log('Disconnected from the server');
-    // });
-
-    // return () => {
-    //   socket.off('connect');
-    //   socket.off('orderChanged');
-    //   socket.off('disconnect');
-    // };
   }, [merchant]);
 
   useEffect(() => {

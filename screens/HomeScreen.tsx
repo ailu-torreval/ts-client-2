@@ -9,7 +9,7 @@ import { Toast } from "native-base";
 import { useEffect, useState } from "react";
 import CustomHeader from "../components/CustomHeader";
 import { BarCodeScanner } from "expo-barcode-scanner";
-
+import { Camera, CameraView } from "expo-camera";
 
 type Props = NativeStackScreenProps<RootStackParamList, "homescreen">;
 
@@ -22,14 +22,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const order = useSelector((state: RootState) => state.order.order);
 
   useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
+    const getCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
     };
 
-    getBarCodeScannerPermissions();
+    getCameraPermissions();
   }, []);
-  
+
   useEffect(() => {
     console.log("home navigation", order);
     if (order?.merchant_id && order?.table_id) {
@@ -44,40 +44,47 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       }
     }
   }, [order]);
-  
 
   useEffect(() => {
     const parent = navigation.getParent();
-  
+
     if (parent) {
       parent.setOptions({
-        tabBarStyle: { display: 'flex',height: 70      },
+        tabBarStyle: { display: "flex", height: 70 },
       });
     }
-  
+
     return () => {
-      if (parent) { 
+      if (parent) {
         parent.setOptions({
-          tabBarStyle: { display: 'flex',height: 70 },
+          tabBarStyle: { display: "flex", height: 70 },
         });
       }
     };
   }, [navigation]);
 
-
   useEffect(() => {
-    console.log("line 42",user.activeOrders)
+    console.log("line 42", user.activeOrders);
   }, [user]);
 
   async function handleFabPress() {
     setScanned(false);
-  };
+    setCameraVisible(true);
+  }
 
-  function handleBarCodeScanned(type:any, data:any ) {
+  function handleBarCodeScanned(scanningResults: { type: any; data: any }) {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    // You can navigate to another screen or process the scanned data here
-  };
+    setCameraVisible(false);
+    const url = new URL(scanningResults.data);
+    const merchantId = url.searchParams.get("merchantId");
+    const tableId = url.searchParams.get("tableId");
+    
+    if (merchantId && tableId) {
+      navigation.navigate("landing", { merchantId, tableId });
+    } else {
+      alert("Invalid QR code data");
+    }
+  }
 
   // async function handleFabPress() {
   //   if (Platform.OS === 'web') {
@@ -97,13 +104,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-<CustomHeader title="Tble Service App" />
+      <CustomHeader title="Tble Service App" />
 
-  <View style={styles.wrapper}>
+      <View style={styles.wrapper}>
         <Text style={styles.title}>Hi {user.user?.firstname}!</Text>
 
         <Card containerStyle={styles.card}>
-          <Icon name="qr-code-scanner" size={60} color={theme.colors.secondary} />
+          <Icon
+            name="qr-code-scanner"
+            size={60}
+            color={theme.colors.secondary}
+          />
           <Text
             style={{
               color: theme.colors.black,
@@ -118,69 +129,82 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
         <Text style={styles.subtitle}>Active Orders</Text>
 
-{
-  user.activeOrders.length > 0 ? (
-    <>
-    {user.activeOrders.map((order, index) => (
-        <Card containerStyle={styles.card} key={index}>
-          <Card.Title
-          style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}  
-          >
-            <Text style={{
-              color: theme.colors.secondary,
-              fontSize: 20,
-              textAlign: "left",
-            }}>Table #{order.table_id}</Text>
-            <Text style={{
-              fontSize: 18,
-              textAlign: "right",
-            }}>Table #{order.table_id}</Text>
-          
-          </Card.Title>
-          <Card.Divider />
-          {order.products?.map((item, index) => (
-            <Text key={index}>
-              1 x {item.name}
-            </Text>
-          ))}
-          <Text style={{fontWeight: 400}} >Total {order.total_amount} kr.</Text>
-        </Card>
-    ))}
-    </>
-  ) : (
-    <>
-        <Card containerStyle={styles.card}>
-          <Icon name="no-food" size={30} color={theme.colors.primary} />
-          <Text
-            style={{
-              color: theme.colors.secondary,
-              fontSize: 20,
-              paddingTop:20,
-              textAlign: "center",
-            }}
-          >
-          No Active Orders
-          </Text>
-        </Card>
-    </>
-  )
-}
+        {user.activeOrders.length > 0 ? (
+          <>
+            {user.activeOrders.map((order, index) => (
+              <Card containerStyle={styles.card} key={index}>
+                <Card.Title
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.colors.secondary,
+                      fontSize: 20,
+                      textAlign: "left",
+                    }}
+                  >
+                    Table #{order.table_id}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      textAlign: "right",
+                    }}
+                  >
+                    Table #{order.table_id}
+                  </Text>
+                </Card.Title>
+                <Card.Divider />
+                {order.products?.map((item, index) => (
+                  <Text key={index}>1 x {item.name}</Text>
+                ))}
+                <Text style={{ fontWeight: 400 }}>
+                  Total {order.total_amount} kr.
+                </Text>
+              </Card>
+            ))}
+          </>
+        ) : (
+          <>
+            <Card containerStyle={styles.card}>
+              <Icon name="no-food" size={30} color={theme.colors.primary} />
+              <Text
+                style={{
+                  color: theme.colors.secondary,
+                  fontSize: 20,
+                  paddingTop: 20,
+                  textAlign: "center",
+                }}
+              >
+                No Active Orders
+              </Text>
+            </Card>
+          </>
+        )}
       </View>
       <View style={styles.scannerContainer}>
-        {!scanned && (
-          <BarCodeScanner
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        {cameraVisible && (
+          <CameraView
+            onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr", "pdf417"],
+            }}
             style={StyleSheet.absoluteFillObject}
           />
         )}
       </View>
-        <FAB
-          onPress={() => handleFabPress()}
-          title="Scan"
-          placement="right"
-          icon={{ name: "qr-code-scanner", color:"#fff" }}
-          size="large"
-        />
+      <FAB
+        onPress={() => handleFabPress()}
+        title="Scan"
+        placement="right"
+        icon={{ name: "qr-code-scanner", color: "#fff" }}
+        size="large"
+      />
     </SafeAreaView>
   );
 };
@@ -205,14 +229,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingVertical: 15,
   },
-  title: { color: "#45A47D", fontWeight: "bold", fontSize: 30, paddingTop: 30, textTransform: 'capitalize' }, 
+  title: {
+    color: "#45A47D",
+    fontWeight: "bold",
+    fontSize: 30,
+    paddingTop: 30,
+    textTransform: "capitalize",
+  },
   header: {
     backgroundColor: "#fff",
   },
   scannerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

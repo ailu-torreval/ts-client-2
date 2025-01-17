@@ -3,6 +3,10 @@ import { Icon, useTheme } from "@rneui/themed";
 import React from "react";
 import AdminProfileScreen from "../screens/AdminProfileScreen";
 import AdminHs from "../screens/AdminHs";
+import InProgressScreen from "../screens/InProgressScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../App";
+import TableScreen from "../screens/TableScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -16,10 +20,12 @@ const AdminNavigation: React.FC = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "home") {
+          if (route.name === "Orders") {
             iconName = "home";
-          } else if (route.name === "Profile") {
-            iconName = "person";
+          } else if (route.name === "Settings") {
+            iconName = "settings";
+          } else if (route.name === "In Progress") {
+            iconName = "food-bank";
           }
           // You can return any component that you like here!
           return   <Icon name={iconName || "home"} size={size + 8} color={color} />
@@ -33,10 +39,39 @@ const AdminNavigation: React.FC = () => {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="home" component={AdminHs} />
-      <Tab.Screen name="Profile" component={AdminProfileScreen} />
+      <Tab.Screen name="Orders" component={AdminHs} />
+      <Tab.Screen name="In Progress" component={InProgressScreen} />
+      <Tab.Screen name="Settings"  component={SettingsStackNavigator} />
     </Tab.Navigator>
   );
 };
 
 export default AdminNavigation;
+
+const SettingsStack = createNativeStackNavigator<RootStackParamList>();
+
+
+
+const SettingsStackNavigator: React.FC = () => {
+  return (
+    <SettingsStack.Navigator>
+      <SettingsStack.Screen
+        name="adminProfile"
+        component={AdminProfileScreen}
+        options={{
+          headerBackVisible: false,
+          headerShown: false,
+          // header: props => <CustomHeader screen="home" />,
+        }}
+      />
+      <SettingsStack.Screen
+        name="tables"
+        component={TableScreen}
+        options={{
+          headerTitle: "Manage Tables",
+
+        }}
+      />
+    </SettingsStack.Navigator>
+  );
+};

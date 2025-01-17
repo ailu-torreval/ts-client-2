@@ -63,6 +63,8 @@ export type RootStackParamList = {
   homescreen: undefined;
   adminHomeScreen:undefined;
   adminProfile: undefined;
+  tables: undefined;
+  inProgress: undefined;
 };
 
 export default function App() {

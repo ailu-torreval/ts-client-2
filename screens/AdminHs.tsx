@@ -10,6 +10,7 @@ import { Order } from "../entities/Order";
 import { format } from "date-fns";
 import { ScrollView } from "native-base";
 import { io } from "socket.io-client";
+import OrderCard from "../components/OrderCard";
 
 // const socket = io("http://localhost:3000", {
 const socket = io("https://ts-server-production-1986.up.railway.app", {
@@ -65,68 +66,7 @@ const AdminHs: React.FC = () => {
               {merchant.orders?.slice().reverse().map((order) => {
                 if (order.order_status === "pending") {
                   return (
-                    <Card key={order.id}>
-                      <Card.Title>
-                        Table # {order.table_id} -{" "}
-                        {order.date
-                          ? format(new Date(order.date), "HH:mm")
-                          : "N/A"}
-                      </Card.Title>
-                      <View>
-                        {order.products?.map((product) => (
-                          <View key={product.id}>
-                            <View style={[styles.grid, styles.margin]}>
-                              <Text style={{ fontWeight: 600 }}>
-                                1 x {product.name}
-                              </Text>
-                              <Text>{product.price} kr.</Text>
-                            </View>
-                            {product.option && (
-                              <View
-                                style={[styles.grid, { marginLeft: 20 }]}
-                                key={product.option.id}
-                              >
-                                <Text>{product.option.name}</Text>
-                                {product.option.price > 0 && (
-                                  <Text>+ {product.option.price} kr.</Text>
-                                )}
-                              </View>
-                            )}
-                            {product.extras && product.extras?.length > 0 && (
-                              <Text style={{ fontWeight: 500, marginTop: 10 }}>
-                                Extras:
-                              </Text>
-                            )}
-                            {product.extras?.map((extra) => (
-                              <View
-                                style={[styles.grid, { marginLeft: 20 }]}
-                                key={extra.id}
-                              >
-                                <Text>{extra.name}</Text>
-                                <Text>+ {extra.price} kr.</Text>
-                              </View>
-                            ))}
-                            {product.note && (
-                              <Text style={{ marginTop: 7 }}>
-                                <i>"{product.note}"</i>
-                              </Text>
-                            )}
-                          </View>
-                        ))}
-                        <View style={[styles.grid, styles.margin]}>
-                          <Text style={{ fontWeight: 800 }}>Total</Text>
-                          <Text style={{ fontWeight: 600 }}>
-                            {order.total_amount} kr.
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={[styles.grid, styles.margin]}>
-                        <Button style={{width: 150}} onPress={() => handleChangeStatus("accepted", order.id!)} size="lg">Accept</Button>
-                        <Button style={{width: 150}} onPress={() => handleChangeStatus("declined", order.id!)} size="lg" color="#ff0505" type="outline">
-                          Decline
-                        </Button>
-                      </View>
-                    </Card>
+                    <OrderCard key={order.id} order={order} action1={() => handleChangeStatus("accepted", order.id!)} action2={() => handleChangeStatus("declined", order.id!)} />
                   );
                 }
               })}

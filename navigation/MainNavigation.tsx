@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useEffect } from "react";
+import React from "react";
 import { RootStackParamList } from "../App";
 import ProfileScreen from "../screens/ProfileScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -11,9 +11,7 @@ import ProductScreen from "../screens/ProductScreen";
 import BasketScreen from "../screens/BasketScreen";
 import ProccessingScreen from "../screens/ProccessingScreen";
 import LandingScreen from "../screens/LandingScreen";
-import { NavigationProp } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+
 
 const Tab = createBottomTabNavigator();
 
